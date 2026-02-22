@@ -1,0 +1,21 @@
+[package]
+name = "accessmanager_zk_contracts"
+version = "0.1.0"
+edition = "2023_10"
+
+[dependencies]
+starknet = "2.8.0"
+
+[[target.starknet-contract]]
+casm = true
+sierra = true
+
+[dev-dependencies]
+snforge_std = "0.55.0"
+assert_macros = "2.15.0"
+
+[scripts]
+test = "snforge test"
+
+[tool.scarb]
+allow-prebuilt-plugins = ["snforge_std"]

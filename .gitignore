@@ -1,0 +1,24 @@
+# Noir & Nargo
+circuits/target/
+circuits/Prover.toml
+circuits/Verifier.toml
+
+# Cairo & Scarb
+contracts/target/
+
+# Node / Demo
+demo/node_modules/
+demo/package-lock.json
+
+# Environment — contains private keys, never commit
+demo/.env
+
+# Logs
+*.log
+
+# General OS
+.DS_Store
+
+# Build caches
+target/
+contracts/.snfoundry_cache/
