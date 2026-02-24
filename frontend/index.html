@@ -1,34 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StarkAccess Protocol — ZK Demo</title>
-    <meta name="description" content="Interactive demo of the StarkAccess ZK Protocol — anonymous access control on Starknet using Noir zero-knowledge proofs.">
+    <meta name="description"
+        content="Interactive demo of the StarkAccess ZK Protocol — anonymous access control on Starknet using Noir zero-knowledge proofs.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
     <style>
         /* ── Variables ── */
         :root {
-            --bg:             #030812;
-            --surface:        rgba(255,255,255,0.04);
-            --surface-hover:  rgba(255,255,255,0.07);
-            --border:         rgba(255,255,255,0.08);
-            --border-glow:    rgba(100,180,255,0.3);
-            --text:           #e8edf5;
-            --muted:          rgba(232,237,245,0.45);
-            --accent:         #4f9eff;
-            --accent2:        #a78bfa;
-            --green:          #34d399;
-            --red:            #f87171;
-            --yellow:         #fbbf24;
-            --glow-blue:      rgba(79,158,255,0.15);
-            --glow-purple:    rgba(167,139,250,0.12);
-            --radius:         16px;
-            --radius-sm:      10px;
+            --bg: #030812;
+            --surface: rgba(255, 255, 255, 0.04);
+            --surface-hover: rgba(255, 255, 255, 0.07);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(100, 180, 255, 0.3);
+            --text: #e8edf5;
+            --muted: rgba(232, 237, 245, 0.45);
+            --accent: #4f9eff;
+            --accent2: #a78bfa;
+            --green: #34d399;
+            --red: #f87171;
+            --yellow: #fbbf24;
+            --glow-blue: rgba(79, 158, 255, 0.15);
+            --glow-purple: rgba(167, 139, 250, 0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
         }
 
-        * { margin:0; padding:0; box-sizing:border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -46,51 +54,157 @@
             pointer-events: none;
             z-index: 0;
         }
-        .bg-orb-1 { width:600px; height:600px; background:rgba(79,158,255,0.08); top:-200px; left:-100px; }
-        .bg-orb-2 { width:500px; height:500px; background:rgba(167,139,250,0.08); top:30%; right:-150px; }
-        .bg-orb-3 { width:400px; height:400px; background:rgba(52,211,153,0.06); bottom:-100px; left:30%; }
+
+        .bg-orb-1 {
+            width: 600px;
+            height: 600px;
+            background: rgba(79, 158, 255, 0.08);
+            top: -200px;
+            left: -100px;
+        }
+
+        .bg-orb-2 {
+            width: 500px;
+            height: 500px;
+            background: rgba(167, 139, 250, 0.08);
+            top: 30%;
+            right: -150px;
+        }
+
+        .bg-orb-3 {
+            width: 400px;
+            height: 400px;
+            background: rgba(52, 211, 153, 0.06);
+            bottom: -100px;
+            left: 30%;
+        }
 
         /* ── Layout ── */
-        .page { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:40px 24px 80px; }
+        .page {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
 
         /* ── Header ── */
-        header { text-align:center; margin-bottom:60px; }
-        .logo { display:inline-flex; align-items:center; gap:12px; margin-bottom:24px; }
-        .logo-icon {
-            width:48px; height:48px; border-radius:14px;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            display:flex; align-items:center; justify-content:center; font-size:22px;
-            box-shadow: 0 0 30px rgba(79,158,255,0.4);
+        header {
+            text-align: center;
+            margin-bottom: 60px;
         }
-        .logo-text { font-size:20px; font-weight:700; letter-spacing:-0.5px; }
-        .logo-text span { color:var(--accent); }
-        h1 { font-size:clamp(32px, 5vw, 52px); font-weight:700; letter-spacing:-1.5px; line-height:1.15; }
-        h1 em { font-style:normal; background:linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .subtitle { margin-top:14px; color:var(--muted); font-size:16px; line-height:1.6; max-width:560px; margin-inline:auto; }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 0 30px rgba(79, 158, 255, 0.4);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            color: var(--accent);
+        }
+
+        h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 700;
+            letter-spacing: -1.5px;
+            line-height: 1.15;
+        }
+
+        h1 em {
+            font-style: normal;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 560px;
+            margin-inline: auto;
+        }
 
         /* ── Network badge ── */
         .network-badge {
-            display:inline-flex; align-items:center; gap:7px;
-            background:var(--surface); border:1px solid var(--border);
-            border-radius:100px; padding:5px 14px 5px 10px; font-size:13px;
-            margin-top:20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 5px 14px 5px 10px;
+            font-size: 13px;
+            margin-top: 20px;
         }
-        .net-dot { width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:pulse 2s infinite; }
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+        .net-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.5
+            }
+        }
 
         /* ── Account bar ── */
         #account-bar {
-            display:none; margin-bottom:24px;
-            background:var(--surface); border:1px solid var(--border);
-            border-radius:var(--radius-sm); padding:12px 16px;
-            font-size:13px; color:var(--muted);
-            display:flex; align-items:center; gap:8px;
+            display: none;
+            margin-bottom: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        #account-bar span { color:var(--accent); font-family:'JetBrains Mono',monospace; }
+
+        #account-bar span {
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
 
         /* ── Steps timeline ── */
         .steps {
-            display:grid; gap:16px;
+            display: grid;
+            gap: 16px;
         }
 
         /* ── Card ── */
@@ -100,137 +214,344 @@
             border-radius: var(--radius);
             padding: 24px;
             transition: border-color .25s, background .25s;
-            position:relative;
-            overflow:hidden;
+            position: relative;
+            overflow: hidden;
         }
+
         .card.active {
             border-color: var(--border-glow);
-            background: rgba(79,158,255,0.05);
+            background: rgba(79, 158, 255, 0.05);
         }
+
         .card.done {
-            border-color: rgba(52,211,153,0.25);
-            background: rgba(52,211,153,0.03);
+            border-color: rgba(52, 211, 153, 0.25);
+            background: rgba(52, 211, 153, 0.03);
         }
-        .card.error { border-color: rgba(248,113,113,0.3); background:rgba(248,113,113,0.04); }
+
+        .card.error {
+            border-color: rgba(248, 113, 113, 0.3);
+            background: rgba(248, 113, 113, 0.04);
+        }
 
         /* card glow line */
         .card::before {
-            content:''; position:absolute; top:0; left:0; right:0; height:1px;
-            background:linear-gradient(90deg, transparent, var(--accent), transparent);
-            opacity:0; transition:opacity .3s;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity .3s;
         }
-        .card.active::before { opacity:1; }
 
-        .card-header { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+        .card.active::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
         .step-num {
-            width:32px; height:32px; border-radius:50%;
-            background: rgba(79,158,255,0.12); border:1px solid rgba(79,158,255,0.3);
-            display:flex; align-items:center; justify-content:center;
-            font-size:13px; font-weight:600; color:var(--accent); flex-shrink:0;
-            transition:all .3s;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(79, 158, 255, 0.12);
+            border: 1px solid rgba(79, 158, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            flex-shrink: 0;
+            transition: all .3s;
         }
-        .card.done  .step-num { background:rgba(52,211,153,0.15); border-color:rgba(52,211,153,0.4); color:var(--green); }
-        .card.error .step-num { background:rgba(248,113,113,0.15); border-color:rgba(248,113,113,0.4); color:var(--red); }
 
-        .card-title { font-size:16px; font-weight:600; flex:1; }
-        .card-status { font-size:12px; font-family:'JetBrains Mono',monospace; color:var(--muted); }
-        .card.done .card-status { color:var(--green); }
-        .card.error .card-status { color:var(--red); }
+        .card.done .step-num {
+            background: rgba(52, 211, 153, 0.15);
+            border-color: rgba(52, 211, 153, 0.4);
+            color: var(--green);
+        }
+
+        .card.error .step-num {
+            background: rgba(248, 113, 113, 0.15);
+            border-color: rgba(248, 113, 113, 0.4);
+            color: var(--red);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .card-status {
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--muted);
+        }
+
+        .card.done .card-status {
+            color: var(--green);
+        }
+
+        .card.error .card-status {
+            color: var(--red);
+        }
 
         /* ── Button ── */
         .btn {
-            display:inline-flex; align-items:center; gap:8px;
-            padding:11px 22px; border-radius:10px; font-size:14px; font-weight:600;
-            cursor:pointer; border:none; transition:all .2s; font-family:inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 22px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all .2s;
+            font-family: inherit;
         }
+
         .btn-primary {
             background: linear-gradient(135deg, var(--accent), #2563eb);
-            color:#fff;
-            box-shadow: 0 4px 20px rgba(79,158,255,0.35);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(79, 158, 255, 0.35);
         }
-        .btn-primary:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 28px rgba(79,158,255,0.45); }
-        .btn-primary:disabled { opacity:.45; cursor:not-allowed; transform:none; }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(79, 158, 255, 0.45);
+        }
+
+        .btn-primary:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .btn-danger {
             background: linear-gradient(135deg, #ef4444, #b91c1c);
-            color:#fff;
-            box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
         }
-        .btn-danger:hover:not(:disabled) { transform:translateY(-2px); }
-        .btn-danger:disabled { opacity:.45; cursor:not-allowed; }
+
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .btn-danger:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
 
         /* ── Output log ── */
         .log-box {
-            margin-top:14px;
-            background: rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.06);
-            border-radius:var(--radius-sm); padding:14px 16px;
-            font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.7;
-            max-height:220px; overflow-y:auto; color:var(--muted);
+            margin-top: 14px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.7;
+            max-height: 220px;
+            overflow-y: auto;
+            color: var(--muted);
         }
-        .log-box:empty { display:none; }
-        .log-line { padding:1px 0; }
-        .log-line.ok  { color:var(--green); }
-        .log-line.err { color:var(--red); }
-        .log-line.info{ color:var(--accent); }
-        .log-line.warn{ color:var(--yellow); }
+
+        .log-box:empty {
+            display: none;
+        }
+
+        .log-line {
+            padding: 1px 0;
+        }
+
+        .log-line.ok {
+            color: var(--green);
+        }
+
+        .log-line.err {
+            color: var(--red);
+        }
+
+        .log-line.info {
+            color: var(--accent);
+        }
+
+        .log-line.warn {
+            color: var(--yellow);
+        }
 
         /* ── KV pairs ── */
-        .kv { display:grid; gap:6px; margin-top:10px; }
-        .kv-row { display:flex; align-items:flex-start; gap:10px; font-size:13px; }
-        .kv-key { color:var(--muted); min-width:130px; flex-shrink:0; }
-        .kv-val { font-family:'JetBrains Mono',monospace; color:var(--accent); word-break:break-all; font-size:12px; }
+        .kv {
+            display: grid;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .kv-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .kv-key {
+            color: var(--muted);
+            min-width: 130px;
+            flex-shrink: 0;
+        }
+
+        .kv-val {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+            word-break: break-all;
+            font-size: 12px;
+        }
 
         /* ── Balance display ── */
         .balance-display {
-            display:flex; align-items:center; justify-content:space-between;
-            background:rgba(0,0,0,0.3); border:1px solid var(--border);
-            border-radius:var(--radius-sm); padding:16px 20px; margin-top:12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            margin-top: 12px;
         }
-        .balance-label { color:var(--muted); font-size:13px; }
+
+        .balance-label {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
         .balance-val {
-            font-size:28px; font-weight:700; font-family:'JetBrains Mono',monospace;
-            color:var(--green); transition:all .5s;
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--green);
+            transition: all .5s;
         }
-        .balance-val.changed { animation:flash .5s; }
-        @keyframes flash { 0%{color:var(--yellow)} 100%{color:var(--green)} }
+
+        .balance-val.changed {
+            animation: flash .5s;
+        }
+
+        @keyframes flash {
+            0% {
+                color: var(--yellow)
+            }
+
+            100% {
+                color: var(--green)
+            }
+        }
 
         /* ── Proof viz ── */
         .proof-card {
-            display:none; margin-top:12px;
-            background:rgba(167,139,250,0.06); border:1px solid rgba(167,139,250,0.2);
-            border-radius:var(--radius-sm); padding:16px;
+            display: none;
+            margin-top: 12px;
+            background: rgba(167, 139, 250, 0.06);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            border-radius: var(--radius-sm);
+            padding: 16px;
         }
-        .proof-card.visible { display:block; }
-        .proof-title { font-size:12px; font-weight:600; color:var(--accent2); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
-        .proof-bytes { font-family:'JetBrains Mono',monospace; font-size:11px; color:rgba(167,139,250,0.8); line-height:1.6; word-break:break-all; }
+
+        .proof-card.visible {
+            display: block;
+        }
+
+        .proof-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .proof-bytes {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: rgba(167, 139, 250, 0.8);
+            line-height: 1.6;
+            word-break: break-all;
+        }
 
         /* ── Spinner ── */
         .spinner {
-            width:16px; height:16px; border:2px solid rgba(255,255,255,0.2);
-            border-top-color:var(--accent); border-radius:50%;
-            animation:spin .7s linear infinite; display:inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            display: inline-block;
         }
-        @keyframes spin { to{transform:rotate(360deg)} }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
 
         /* ── Security banner ── */
         .security-banner {
-            display:none; margin-top:12px; padding:14px 16px;
-            background:rgba(52,211,153,0.08); border:1px solid rgba(52,211,153,0.25);
-            border-radius:var(--radius-sm); font-size:13.5px; color:var(--green);
+            display: none;
+            margin-top: 12px;
+            padding: 14px 16px;
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            color: var(--green);
         }
+
         .security-banner.fail {
-            background:rgba(248,113,113,0.08); border-color:rgba(248,113,113,0.25); color:var(--red);
+            background: rgba(248, 113, 113, 0.08);
+            border-color: rgba(248, 113, 113, 0.25);
+            color: var(--red);
         }
 
         /* ── Footer ── */
-        footer { text-align:center; margin-top:60px; color:var(--muted); font-size:13px; }
-        footer a { color:var(--accent); text-decoration:none; }
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
 
         /* ── Scrollbar ── */
-        ::-webkit-scrollbar { width:5px; }
-        ::-webkit-scrollbar-track { background:transparent; }
-        ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:4px; }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
     </style>
 </head>
+
 <body>
     <div class="bg-orb bg-orb-1"></div>
     <div class="bg-orb bg-orb-2"></div>
@@ -250,7 +571,7 @@
             </p>
             <div class="network-badge">
                 <div class="net-dot"></div>
-                <span id="net-label">Starknet Devnet</span>
+                <span id="net-label">Starknet Sepolia</span>
             </div>
         </header>
 
@@ -269,21 +590,25 @@
                     <div class="card-status" id="status-1">pending</div>
                 </div>
                 <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
-                    Enter your devnet account credentials to connect to the local Starknet node.
+                    Enter your Sepolia account credentials to connect to the node.
                 </p>
                 <div style="display:grid;gap:10px;margin-bottom:14px;">
                     <div>
-                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">RPC URL</label>
-                        <input id="rpc-url" type="text" value="http://127.0.0.1:5050"
+                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">RPC
+                            URL</label>
+                        <input id="rpc-url" type="text"
+                            placeholder="https://starknet-sepolia.public... / http://127.0.0.1:5050"
                             style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:inherit;outline:none;">
                     </div>
                     <div>
-                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">Account Address</label>
+                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">Account
+                            Address</label>
                         <input id="acct-addr" type="text" placeholder="0x..."
                             style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;">
                     </div>
                     <div>
-                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">Private Key</label>
+                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">Private
+                            Key</label>
                         <input id="priv-key" type="password" placeholder="0x..."
                             style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;">
                     </div>
@@ -298,16 +623,16 @@
             <div class="card" id="card-2">
                 <div class="card-header">
                     <div class="step-num">2</div>
-                    <div class="card-title">Deploy Contracts</div>
+                    <div class="card-title">Load Contracts (Sepolia)</div>
                     <div class="card-status" id="status-2">waiting</div>
                 </div>
                 <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
-                    Deploy <strong style="color:var(--text)">MockVerifier</strong>,
+                    Load the pre-deployed <strong style="color:var(--text)">MockVerifier</strong>,
                     <strong style="color:var(--text)">AccessManagerZK</strong>, and
-                    <strong style="color:var(--text)">ProtectedTreasury</strong> to the devnet.
+                    <strong style="color:var(--text)">ProtectedTreasury</strong> on Sepolia.
                 </p>
-                <button class="btn btn-primary" id="btn-deploy" onclick="doDeploy()" disabled>
-                    Deploy Contracts →
+                <button class="btn btn-primary" id="btn-deploy" onclick="doLoadContracts()" disabled>
+                    Connect to Contracts →
                 </button>
                 <div class="log-box" id="log-2"></div>
                 <div class="kv" id="deploy-kv"></div>
@@ -415,10 +740,10 @@
         // ── State ──────────────────────────────────────────────────────────────
         const state = {
             provider: null,
-            account:  null,
+            account: null,
             // Deployed addresses
             verifierAddr: null,
-            managerAddr:  null,
+            managerAddr: null,
             treasuryAddr: null,
             // Treasury contract w/ account as signer
             treasury: null,
@@ -426,7 +751,7 @@
             // ZK Proof data
             root: null,
             actionHash: null,
-            nullifier:  null,
+            nullifier: null,
             proofFelts: null,
         };
 
@@ -434,7 +759,7 @@
         let ABIS = {};
 
         // ── Helpers ─────────────────────────────────────────────────────────────
-        function log(id, msg, cls='') {
+        function log(id, msg, cls = '') {
             const box = document.getElementById(`log-${id}`);
             const line = document.createElement('div');
             line.className = `log-line ${cls}`;
@@ -442,14 +767,14 @@
             box.appendChild(line);
             box.scrollTop = box.scrollHeight;
         }
-        function setStatus(id, text, type='') {
+        function setStatus(id, text, type = '') {
             const el = document.getElementById(`status-${id}`);
             el.textContent = text;
             el.style.color = type === 'ok' ? 'var(--green)' : type === 'err' ? 'var(--red)' : type === 'loading' ? 'var(--yellow)' : '';
         }
         function setCard(id, cls) {
             const card = document.getElementById(`card-${id}`);
-            card.classList.remove('active','done','error');
+            card.classList.remove('active', 'done', 'error');
             if (cls) card.classList.add(cls);
         }
         function setBalance(val) {
@@ -457,7 +782,7 @@
             document.getElementById('balance-display').style.display = 'flex';
             el.textContent = val;
             el.classList.add('changed');
-            setTimeout(()=>el.classList.remove('changed'), 600);
+            setTimeout(() => el.classList.remove('changed'), 600);
         }
         function addKV(containerId, key, val) {
             const c = document.getElementById(containerId);
@@ -482,110 +807,97 @@
         }
 
         // ── Step 1: Connect ─────────────────────────────────────────────────────
-        window.doConnect = async function() {
+        window.doConnect = async function () {
             const btn = document.getElementById('btn-connect');
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner"></span> Connecting…';
-            setStatus(1,'connecting…','loading');
+            setStatus(1, 'connecting…', 'loading');
 
             const rpcUrl = document.getElementById('rpc-url').value.trim();
-            const addr   = document.getElementById('acct-addr').value.trim();
-            const pk     = document.getElementById('priv-key').value.trim();
+            const addr = document.getElementById('acct-addr').value.trim();
+            const pk = document.getElementById('priv-key').value.trim();
 
             if (!addr || !pk) {
-                log(1,'❌ Enter account address and private key.','err');
-                setStatus(1,'error','err'); setCard(1,'error');
-                btn.disabled=false; btn.textContent='Connect →';
+                log(1, '❌ Enter account address and private key.', 'err');
+                setStatus(1, 'error', 'err'); setCard(1, 'error');
+                btn.disabled = false; btn.textContent = 'Connect →';
                 return;
             }
 
             try {
                 state.provider = new RpcProvider({ nodeUrl: rpcUrl });
                 await state.provider.getChainId();
-                state.account  = new Account(state.provider, addr, pk);
-                log(1,'✅ Connected to node: ' + rpcUrl,'ok');
-                log(1,'✅ Account: ' + addr,'ok');
+                state.account = new Account(state.provider, addr, pk);
+                log(1, '✅ Connected to node: ' + rpcUrl, 'ok');
+                log(1, '✅ Account: ' + addr, 'ok');
 
                 document.getElementById('account-bar').style.display = 'flex';
-                document.getElementById('account-addr').textContent = truncate(addr) + ' (' + addr.slice(0,6) + '…' + addr.slice(-4) + ')';
+                document.getElementById('account-addr').textContent = truncate(addr) + ' (' + addr.slice(0, 6) + '…' + addr.slice(-4) + ')';
 
-                setStatus(1,'connected ✓','ok'); setCard(1,'done');
+                setStatus(1, 'connected ✓', 'ok'); setCard(1, 'done');
 
                 document.getElementById('btn-deploy').disabled = false;
-                setCard(2,'active'); setStatus(2,'ready');
+                setCard(2, 'active'); setStatus(2, 'ready');
                 btn.innerHTML = '✓ Connected';
-            } catch(e) {
-                log(1,'❌ Failed: ' + (e.message || e),'err');
-                setStatus(1,'error','err'); setCard(1,'error');
-                btn.disabled=false; btn.textContent='Connect →';
+            } catch (e) {
+                log(1, '❌ Failed: ' + (e.message || e), 'err');
+                setStatus(1, 'error', 'err'); setCard(1, 'error');
+                btn.disabled = false; btn.textContent = 'Connect →';
             }
         };
 
-        // ── Step 2: Deploy ──────────────────────────────────────────────────────
-        window.doDeploy = async function() {
+        // ── Step 2: Load Pre-Deployed Sepolia Contracts ────────────────────────
+        window.doLoadContracts = async function () {
             const btn = document.getElementById('btn-deploy');
-            btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Deploying…';
-            setStatus(2,'deploying…','loading'); setCard(2,'active');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Loading…';
+            setStatus(2, 'loading…', 'loading');
+            setCard(2, 'active');
 
             try {
-                // Try to load ABIs from local compiled artifacts
-                const vSierra = await loadAbi('accessmanager_zk_contracts_MockVerifier.contract_class.json');
-                const vCasm   = await loadAbi('accessmanager_zk_contracts_MockVerifier.compiled_contract_class.json');
-                const mSierra = await loadAbi('accessmanager_zk_contracts_AccessManagerZK.contract_class.json');
-                const mCasm   = await loadAbi('accessmanager_zk_contracts_AccessManagerZK.compiled_contract_class.json');
-                const tSierra = await loadAbi('accessmanager_zk_contracts_ProtectedTreasury.contract_class.json');
-                const tCasm   = await loadAbi('accessmanager_zk_contracts_ProtectedTreasury.compiled_contract_class.json');
+                // Hardcoded Sepolia Addresses from recent deployment
+                state.verifierAddr = "0x25d201b91751f734bc67b6f7c9a8078547028aa5f302e5282fe3d103495c858";
+                state.managerAddr = "0x21a82b266af88041bb570132386bd0dc825cd7cf8b3551f9fe187462b9881e4";
+                state.treasuryAddr = "0x6a9b6636df830989e83c611863155093186acba7d4dc65db9798c3bd80d75ca";
 
-                if (!vSierra) {
-                    throw new Error('Could not load contract artifacts. Run: cd contracts && scarb build');
-                }
+                log(2, '⏳ Fetching ABI for ProtectedTreasury...', 'info');
+                // Use starknet.js extractAbi from the RPC provider
+                const cd = await state.provider.getClassAt(state.treasuryAddr);
+                const tAbi = cd.abi;
+                state.treasuryAbi = tAbi;
 
-                log(2,'⏳ Deploying MockVerifier…','info');
-                const vDeploy = await state.account.declareAndDeploy({ contract: vSierra, casm: vCasm });
-                state.verifierAddr = vDeploy.deploy.contract_address;
-                log(2,'✅ MockVerifier: ' + state.verifierAddr,'ok');
-                addKV('deploy-kv','MockVerifier', state.verifierAddr);
+                // Create contract instance connected to account so it can transact
+                state.treasury = new Contract(tAbi, state.treasuryAddr, state.account);
 
-                log(2,'⏳ Deploying AccessManagerZK…','info');
-                const mDeploy = await state.account.declareAndDeploy({
-                    contract: mSierra, casm: mCasm,
-                    constructorCalldata: CallData.compile([state.verifierAddr]),
-                });
-                state.managerAddr = mDeploy.deploy.contract_address;
-                log(2,'✅ AccessManagerZK: ' + state.managerAddr,'ok');
-                addKV('deploy-kv','AccessManagerZK', state.managerAddr);
+                log(2, '✅ Linked MockVerifier: ' + truncate(state.verifierAddr), 'ok');
+                addKV('deploy-kv', 'MockVerifier', state.verifierAddr);
 
-                log(2,'⏳ Deploying ProtectedTreasury (balance=10000)…','info');
-                const tDeploy = await state.account.declareAndDeploy({
-                    contract: tSierra, casm: tCasm,
-                    constructorCalldata: CallData.compile([
-                        state.managerAddr, 10000, state.account.address
-                    ]),
-                });
-                state.treasuryAddr = tDeploy.deploy.contract_address;
-                state.treasuryAbi  = tSierra.abi;
-                log(2,'✅ ProtectedTreasury: ' + state.treasuryAddr,'ok');
-                addKV('deploy-kv','ProtectedTreasury', state.treasuryAddr);
+                log(2, '✅ Linked AccessManagerZK: ' + truncate(state.managerAddr), 'ok');
+                addKV('deploy-kv', 'AccessManagerZK', state.managerAddr);
 
-                // Create contract instance
-                state.treasury = new Contract(tSierra.abi, state.treasuryAddr, state.account);
+                log(2, '✅ Linked ProtectedTreasury: ' + truncate(state.treasuryAddr), 'ok');
+                addKV('deploy-kv', 'ProtectedTreasury', state.treasuryAddr);
 
-                setStatus(2,'deployed ✓','ok'); setCard(2,'done');
+                setStatus(2, 'loaded ✓', 'ok');
+                setCard(2, 'done');
                 document.getElementById('btn-setup').disabled = false;
-                setCard(3,'active'); setStatus(3,'ready');
-                btn.innerHTML = '✓ Deployed';
-            } catch(e) {
-                log(2,'❌ ' + (e.message||e),'err');
-                setStatus(2,'error','err'); setCard(2,'error');
-                btn.disabled=false; btn.innerHTML='Deploy Contracts →';
+                setCard(3, 'active');
+                setStatus(3, 'ready');
+                btn.innerHTML = '✓ Contracts Loaded';
+            } catch (e) {
+                log(2, '❌ Failed to connect to contracts: ' + (e.message || e), 'err');
+                setStatus(2, 'error', 'err');
+                setCard(2, 'error');
+                btn.disabled = false;
+                btn.innerHTML = 'Connect to Contracts →';
             }
         };
 
         // ── Step 3: Setup Role ──────────────────────────────────────────────────
-        window.doSetup = async function() {
+        window.doSetup = async function () {
             const btn = document.getElementById('btn-setup');
-            btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Setting up…';
-            setStatus(3,'in progress…','loading');
+            btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Setting up…';
+            setStatus(3, 'in progress…', 'loading');
 
             // Merkle root from circuit Prover.toml
             // secret=12345, depth-4 tree with siblings [999,888,777,666]
@@ -593,127 +905,128 @@
             state.root = MERKLE_ROOT;
 
             try {
-                log(3,'📡 Calling setup_role_root…','info');
-                log(3,'   Merkle Root: 0x027b2068…','info');
+                log(3, '📡 Calling setup_role_root…', 'info');
+                log(3, '   Merkle Root: 0x027b2068…', 'info');
                 const tx = await state.treasury.setup_role_root(MERKLE_ROOT);
                 await state.provider.waitForTransaction(tx.transaction_hash);
-                log(3,'✅ Merkle root registered on AccessManagerZK','ok');
-                addKV('setup-kv','Merkle Root', '0x027b2068fbe2…ba75');
-                addKV('setup-kv','Tx Hash', tx.transaction_hash);
+                log(3, '✅ Merkle root registered on AccessManagerZK', 'ok');
+                addKV('setup-kv', 'Merkle Root', '0x027b2068fbe2…ba75');
+                addKV('setup-kv', 'Tx Hash', tx.transaction_hash);
 
-                setStatus(3,'done ✓','ok'); setCard(3,'done');
+                setStatus(3, 'done ✓', 'ok'); setCard(3, 'done');
                 document.getElementById('btn-proof').disabled = false;
-                setCard(4,'active'); setStatus(4,'ready');
+                setCard(4, 'active'); setStatus(4, 'ready');
                 btn.innerHTML = '✓ Role Configured';
-            } catch(e) {
-                log(3,'❌ ' + (e.message||e),'err');
-                setStatus(3,'error','err'); setCard(3,'error');
-                btn.disabled=false; btn.innerHTML='Register Merkle Root →';
+            } catch (e) {
+                log(3, '❌ ' + (e.message || e), 'err');
+                setStatus(3, 'error', 'err'); setCard(3, 'error');
+                btn.disabled = false; btn.innerHTML = 'Register Merkle Root →';
             }
         };
 
         // ── Step 4: ZK Proof ────────────────────────────────────────────────────
-        window.doProof = async function() {
+        window.doProof = async function () {
             const btn = document.getElementById('btn-proof');
-            btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Generating proof…';
-            setStatus(4,'computing…','loading');
+            btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Generating proof…';
+            setStatus(4, 'computing…', 'loading');
 
             try {
                 // Pre-verified values from Prover.toml (nargo prove + nargo test passes)
                 // These values satisfy all Poseidon Merkle & nullifier constraints
-                state.root       = BigInt('0x027b2068fbe2098fc02f62dc9aac4ff40b8c77dbff40651492e14e7d2eb8ba75');
+                state.root = BigInt('0x027b2068fbe2098fc02f62dc9aac4ff40b8c77dbff40651492e14e7d2eb8ba75');
                 state.actionHash = BigInt('0x6f'); // 111 — 'withdraw' action hash
-                state.nullifier  = BigInt('0x144feb5d29cc36bc7f8c3a9f8579f3116453c0f8eaf45848dd21facbbd98b42e');
+                state.nullifier = BigInt('0x144feb5d29cc36bc7f8c3a9f8579f3116453c0f8eaf45848dd21facbbd98b42e');
                 state.proofFelts = [1n]; // For MockVerifier: any non-empty proof
 
-                log(4,'🔮 Circuit: secret=12345, depth-4 Merkle tree','info');
-                log(4,'⚙️  Verifying Poseidon constraints…','info');
+                log(4, '🔮 Circuit: secret=12345, depth-4 Merkle tree', 'info');
+                log(4, '⚙️  Verifying Poseidon constraints…', 'info');
                 // Simulate computation time
                 await new Promise(r => setTimeout(r, 1200));
-                log(4,'✅ Merkle membership: VALID','ok');
-                log(4,'✅ Nullifier binding: VALID','ok');
-                log(4,'✅ ZK Proof computed — constraints satisfied!','ok');
+                log(4, '✅ Merkle membership: VALID', 'ok');
+                log(4, '✅ Nullifier binding: VALID', 'ok');
+                log(4, '✅ ZK Proof computed — constraints satisfied!', 'ok');
 
                 document.getElementById('proof-viz').classList.add('visible');
-                addKV('proof-kv','root',        '0x027b2068fbe2…ba75');
-                addKV('proof-kv','action_hash', '111 (withdraw)');
-                addKV('proof-kv','nullifier',   '0x144feb…b42e');
-                addKV('proof-kv','circuit depth','4 hops (Poseidon)');
+                addKV('proof-kv', 'root', '0x027b2068fbe2…ba75');
+                addKV('proof-kv', 'action_hash', '111 (withdraw)');
+                addKV('proof-kv', 'nullifier', '0x144feb…b42e');
+                addKV('proof-kv', 'circuit depth', '4 hops (Poseidon)');
 
-                setStatus(4,'ready ✓','ok'); setCard(4,'done');
+                setStatus(4, 'ready ✓', 'ok'); setCard(4, 'done');
                 document.getElementById('btn-withdraw').disabled = false;
-                setCard(5,'active'); setStatus(5,'ready');
+                setCard(5, 'active'); setStatus(5, 'ready');
                 btn.innerHTML = '✓ Proof Ready';
-            } catch(e) {
-                log(4,'❌ ' + (e.message||e),'err');
-                setStatus(4,'error','err'); setCard(4,'error');
-                btn.disabled=false; btn.innerHTML='Generate ZK Proof →';
+            } catch (e) {
+                log(4, '❌ ' + (e.message || e), 'err');
+                setStatus(4, 'error', 'err'); setCard(4, 'error');
+                btn.disabled = false; btn.innerHTML = 'Generate ZK Proof →';
             }
         };
 
         // ── Step 5: Withdraw ────────────────────────────────────────────────────
-        window.doWithdraw = async function() {
+        window.doWithdraw = async function () {
             const btn = document.getElementById('btn-withdraw');
-            btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Submitting…';
-            setStatus(5,'pending tx…','loading');
+            btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Submitting…';
+            setStatus(5, 'pending tx…', 'loading');
 
             try {
                 const publicInputs = [state.root, state.actionHash, state.nullifier];
                 const before = await state.treasury.get_balance();
-                log(5,'💰 Balance before: ' + before,'info');
+                log(5, '💰 Balance before: ' + before, 'info');
                 setBalance(before.toString() + ' tokens');
 
-                log(5,'📨 Submitting withdraw(500, proof, publicInputs)…','info');
+                log(5, '📨 Submitting withdraw(500, proof, publicInputs)…', 'info');
                 const tx = await state.treasury.withdraw(500n, state.proofFelts, publicInputs);
-                log(5,'⏳ Tx: ' + tx.transaction_hash,'info');
+                log(5, '⏳ Tx: ' + tx.transaction_hash, 'info');
                 await state.provider.waitForTransaction(tx.transaction_hash);
 
                 const after = await state.treasury.get_balance();
-                log(5,'✅ Withdrawal confirmed!','ok');
-                log(5,'💰 Balance after: ' + after,'ok');
+                log(5, '✅ Withdrawal confirmed!', 'ok');
+                log(5, '💰 Balance after: ' + after, 'ok');
                 setBalance(after.toString() + ' tokens');
 
-                setStatus(5,'withdrawn ✓','ok'); setCard(5,'done');
+                setStatus(5, 'withdrawn ✓', 'ok'); setCard(5, 'done');
                 document.getElementById('btn-replay').disabled = false;
-                setCard(6,'active'); setStatus(6,'ready');
+                setCard(6, 'active'); setStatus(6, 'ready');
                 btn.innerHTML = '✓ Withdrawn';
-            } catch(e) {
-                log(5,'❌ ' + (e.message||e),'err');
-                setStatus(5,'error','err'); setCard(5,'error');
-                btn.disabled=false; btn.innerHTML='Withdraw 500 Tokens →';
+            } catch (e) {
+                log(5, '❌ ' + (e.message || e), 'err');
+                setStatus(5, 'error', 'err'); setCard(5, 'error');
+                btn.disabled = false; btn.innerHTML = 'Withdraw 500 Tokens →';
             }
         };
 
         // ── Step 6: Replay Attack ───────────────────────────────────────────────
-        window.doReplay = async function() {
+        window.doReplay = async function () {
             const btn = document.getElementById('btn-replay');
-            btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Attacking…';
-            setStatus(6,'testing…','loading');
+            btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Attacking…';
+            setStatus(6, 'testing…', 'loading');
 
-            log(6,'⚠ Re-submitting same proof + nullifier…','warn');
+            log(6, '⚠ Re-submitting same proof + nullifier…', 'warn');
             const publicInputs = [state.root, state.actionHash, state.nullifier];
 
             try {
                 const tx = await state.treasury.withdraw(500n, state.proofFelts, publicInputs);
                 await state.provider.waitForTransaction(tx.transaction_hash);
 
-                log(6,'🚨 REPLAY SUCCEEDED — SECURITY FAILURE!','err');
+                log(6, '🚨 REPLAY SUCCEEDED — SECURITY FAILURE!', 'err');
                 const banner = document.getElementById('sec-banner');
                 banner.textContent = '🚨 SECURITY FAILURE: Replay attack succeeded!';
-                banner.classList.add('fail'); banner.style.display='block';
-                setStatus(6,'FAILED','err'); setCard(6,'error');
-            } catch(_e) {
-                log(6,'✅ Transaction reverted as expected!','ok');
-                log(6,'   Error: Nullifier already used','ok');
+                banner.classList.add('fail'); banner.style.display = 'block';
+                setStatus(6, 'FAILED', 'err'); setCard(6, 'error');
+            } catch (_e) {
+                log(6, '✅ Transaction reverted as expected!', 'ok');
+                log(6, '   Error: Nullifier already used', 'ok');
 
                 const banner = document.getElementById('sec-banner');
                 banner.textContent = '🛡 Replay Attack Blocked! The nullifier 0x144feb…b42e is permanently recorded on-chain. Any attempt to re-use this proof is rejected.';
-                banner.style.display='block';
+                banner.style.display = 'block';
 
-                setStatus(6,'blocked ✓','ok'); setCard(6,'done');
+                setStatus(6, 'blocked ✓', 'ok'); setCard(6, 'done');
                 btn.innerHTML = '✓ Attack Blocked';
             }
         };
     </script>
 </body>
+
 </html>
