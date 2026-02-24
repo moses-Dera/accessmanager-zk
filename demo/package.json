@@ -15,8 +15,8 @@
     "starknet": "^9.2.1"
   },
   "devDependencies": {
-    "@noir-lang/backend_barretenberg": "^0.36.0",
-    "@noir-lang/noir_js": "^0.36.0",
+    "@noir-lang/backend_barretenberg": "^0.36.0-07ab515.nightly",
+    "@noir-lang/noir_js": "^1.0.0-beta.18",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
