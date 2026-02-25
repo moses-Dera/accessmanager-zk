@@ -61,14 +61,30 @@ fn cast_vote(
 
 ---
 
-## 2. The Frontend Experience
+## 2. The Frontend Experience (The "Sign-in with Google" Flow)
 
-For the end-user visiting the DAO's website, the flow feels exactly like an OAuth login, but happens entirely locally in their browser:
+For the end-user visiting the DAO's website, the flow feels exactly like a seamless OAuth login, but happens entirely locally in their browser:
 
-1. **Prompt**: The DAO frontend prompts the user: *"Prove you are a DAO Member to vote."*
-2. **Local Generation**: The user's browser uses the StarkAccess circuit (via `bb.js` or `snarkjs` depending on the proving backend) to generate a ZK Proof using their hidden secret. **The secret never leaves their computer.**
-3. **Submission**: The frontend submits the transaction to the `DAO_Voting` contract containing only the Proof, the Target Root, and the Nullifier.
-4. **Verification**: The DAO's contract talks to `AccessManagerZK`, verifies the proof, and accepts the vote.
+### Step 1: The "Sign in with StarkAccess" Button
+Just like adding `<GoogleLogin />` in a React app, the DAO adds a simple button to their frontend:
+```javascript
+// Example DAO Frontend
+<button onClick={handleStarkAccessVerify}>
+  Sign in with StarkAccess
+</button>
+```
+
+### Step 2: The Seamless Verification
+When clicked, the DAO's frontend doesn't need to know any ZK math. They use the StarkAccess SDK (or similar package):
+
+1. **Prompt**: The browser prompts the user to select their identity/credential. *("Prove you are a DAO Member to vote.")*
+2. **Local Generation**: The StarkAccess SDK in the browser runs the Noir WASM circuit (`bb.js`) to generate a ZK Proof using their hidden secret. **The secret never leaves their computer. The DAO never sees it.**
+3. **Submission**: The SDK returns the `proof`, `root`, and `nullifier` to the DAO's frontend.
+4. **Action**: The DAO frontend submits these directly to their `DAO_Voting` smart contract (which we showed in Part 1).
+
+### Step 3: The Result
+The user is instantly authenticated and their vote is cast—completely anonymously. The DAO's smart contract verifies the proof via the `AccessManagerZK` on-chain, acting as the decentralized OAuth server.
+
 
 ---
 

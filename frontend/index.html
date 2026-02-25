@@ -11,6 +11,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔐</text></svg>">
     <style>
         /* ── Variables ── */
         :root {
@@ -549,6 +551,90 @@
             background: rgba(255, 255, 255, 0.1);
             border-radius: 4px;
         }
+
+        /* ── Documentation Sections ── */
+        .docs-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .docs-section h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .docs-section h2 span {
+            color: var(--accent);
+        }
+
+        .docs-section p {
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        .docs-section ul {
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 20px;
+            font-size: 15px;
+            padding-left: 20px;
+        }
+
+        .docs-section li {
+            margin-bottom: 8px;
+        }
+
+        .docs-section li strong {
+            color: #fff;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #e8edf5;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .code-block .keyword {
+            color: var(--accent2);
+        }
+
+        .code-block .function {
+            color: var(--accent);
+        }
+
+        .code-block .string {
+            color: var(--green);
+        }
+
+        .code-block .comment {
+            color: rgba(232, 237, 245, 0.4);
+        }
+
+        .demo-title {
+            text-align: center;
+            margin: 60px 0 30px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+            font-size: 28px;
+        }
     </style>
 </head>
 
@@ -561,7 +647,7 @@
         <!-- Header -->
         <header>
             <div class="logo">
-                <div class="logo-icon">🔐</div>
+                <!-- <div class="logo-icon">🔐</div> -->
                 <div class="logo-text">Stark<span>Access</span></div>
             </div>
             <h1>Anonymous Access Control<br>with <em>Zero-Knowledge Proofs</em></h1>
@@ -573,12 +659,161 @@
                 <div class="net-dot"></div>
                 <span id="net-label">Starknet Sepolia</span>
             </div>
+            <div style="margin-top:20px;">
+                <a href="https://github.com/moses-Dera/accessmanager-zk" target="_blank" class="btn"
+                    style="background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:13px;padding:8px 16px;">
+                    View on GitHub
+                </a>
+            </div>
         </header>
 
         <!-- Account bar -->
         <div id="account-bar">
             🪪 Connected: <span id="account-addr">—</span>
         </div>
+
+        <!-- Documentation Sections -->
+
+        <!-- Technical Whitepaper -->
+        <div class="docs-section" style="border-left: 4px solid var(--accent2);">
+            <h2 style="font-size: 28px; margin-bottom: 24px;"><span>00.</span> StarkAccess: Technical Whitepaper</h2>
+
+            <h3 style="color:#fff; font-size:18px; margin-top:24px; margin-bottom:12px;">1. The Web3 Privacy Problem
+            </h3>
+            <p>In traditional Web2, applications rely on centralized servers (like "Sign-in with Google" or Discord
+                roles) to handle identity verification. In Web3, standard access control relies on public token
+                balances, NFTs, or hardcoded whitelists. If a DAO wants to allow only NFT holders to vote, the user must
+                publicly link their wallet to their vote, completely destroying privacy and exposing their financial
+                holdings.</p>
+            <p><strong>StarkAccess solves this by separating <em>identity</em> from <em>action</em>.</strong></p>
+
+            <h3 style="color:#fff; font-size:18px; margin-top:32px; margin-bottom:12px;">2. Core Cryptography</h3>
+            <p>StarkAccess is built entirely on Zero-Knowledge cryptography to achieve anonymous verification. We
+                utilize <strong>Noir</strong>, the universal language for zero-knowledge proving, which compiles down to
+                efficient ACIR (Abstract Circuit Intermediate Representation) and eventually down to Groth16 or
+                UltraHonk proof backend formats.</p>
+            <p>For hashing, the protocol strictly uses the <strong>Poseidon</strong> hash function, which is natively
+                ZK-friendly and mathematically optimized for efficient circuit execution.</p>
+
+            <h3 style="color:#fff; font-size:18px; margin-top:32px; margin-bottom:12px;">3. The Protocol Flow (Identity
+                & Action)</h3>
+            <p>The system works through three distinct cryptographic phases:</p>
+            <ul>
+                <li><strong>The Commitment Phase:</strong> A governing body (like a DAO) defines a list of authorized
+                    users. Instead of publishing their addresses, they publish a single <strong>Merkle Root</strong>
+                    derived from a Merkle Tree of Poseidon hashes of the users' hidden secrets (commitments). This Root
+                    is registered on the <code>AccessManagerZK</code> Starknet contract as the "Role ID".</li>
+                <li><strong>The Proof Phase:</strong> To take an action (e.g., voting), a user generates a
+                    Zero-Knowledge Proof entirely locally inside their browser. The circuit proves: <em>"I possess a
+                        secret `s` such that `Poseidon(s)` is a valid leaf in the Merkle Tree with the public Root
+                        `R`."</em> <strong>The secret `s` is never revealed or submitted on-chain.</strong></li>
+                <li><strong>The Sybil Resistance Phase (Nullifiers):</strong> To prevent a user from voting twice with
+                    the same secret, the circuit simultaneously computes a <strong>Nullifier</strong>. The Nullifier is
+                    calculated as <code>Poseidon(secret, action_hash)</code>. Because it includes the
+                    <code>action_hash</code> (a specific context, like "Vote_Proposal_12"), the user gets exactly one
+                    unique nullifier per action. If they submit the proof again, the Starknet contract rejects the
+                    transaction because the nullifier has already been recorded ("spent").
+                </li>
+            </ul>
+
+            <h3 style="color:#fff; font-size:18px; margin-top:32px; margin-bottom:12px;">4. Starknet Smart Contract
+                Architecture</h3>
+            <p>The on-chain component is defined by the <code>AccessManagerZK</code> Cairo contract. It acts as the
+                "Decentralized OAuth Server." Third-party protocols (like <code>ProtectedTreasury</code> or
+                <code>DAO_Voting</code>) do not need to parse raw ZK bytes; they simply call `AccessManagerZK`'s
+                `verify_proof_and_consume()` function, passing in the action and the proof payload payload. The
+                AccessManager checks the SNARK verification and securely records the nullifier, returning a simple
+                <code>true</code> or <code>false</code> to the calling contract.
+            </p>
+        </div>
+
+        <!-- Architecture -->
+        <div class="docs-section">
+            <h2><span>01.</span> The Architecture</h2>
+            <p>StarkAccess acts as the central identity verifier. Instead of a dApp keeping an internal whitelist of
+                authorized addresses (which sacrifices privacy), the dApp relies on StarkAccess.</p>
+            <ul>
+                <li><strong>The Group:</strong> The DAO defines authorized members off-chain and generates a Merkle Tree
+                    from their hidden secrets.</li>
+                <li><strong>The Registry:</strong> This Merkle Root is registered on the central
+                    <code>AccessManagerZK</code> contract, creating a unique Role ID.
+                </li>
+                <li><strong>The Proof:</strong> Users generate a Zero-Knowledge Proof locally stating <em>"I possess a
+                        secret in this tree"</em> without revealing which one.</li>
+                <li><strong>The Nullifier:</strong> Along with the proof, a unique mathematical "nullifier" is generated
+                    to prevent users from taking an action (like voting) twice.</li>
+            </ul>
+        </div>
+
+        <!-- Smart Contract Integration -->
+        <div class="docs-section">
+            <h2><span>02.</span> Smart Contract Integration</h2>
+            <p>Integrating StarkAccess into your Cairo smart contract takes just one line of code. You simply call the
+                <code>verify_proof_and_consume</code> function on the Access Manager.
+            </p>
+            <div class="code-block">
+                <pre><span class="comment">// 1. Initialize the Access Manager Dispatcher</span>
+<span class="keyword">let</span> access_manager = IAccessManagerDispatcher {
+    contract_address: self.starkaccess_address.read()
+};
+
+<span class="comment">// 2. Ask StarkAccess to verify the proof!</span>
+<span class="comment">// This checks the ZK proof AND prevents double-actions via the nullifier</span>
+<span class="keyword">let</span> is_valid = access_manager.<span class="function">verify_proof_and_consume</span>(
+    root, 
+    action_hash, 
+    nullifier, 
+    proof
+);
+
+<span class="function">assert</span>(is_valid, <span class="string">'UNAUTHORIZED_OR_ALREADY_USED'</span>);</pre>
+            </div>
+            <p>There is no complex ZK math in your codebase. You treat exactly like verifying a traditional Web2 API JWT
+                token.</p>
+        </div>
+
+        <!-- Frontend Integration -->
+        <div class="docs-section">
+            <h2><span>03.</span> The "Sign-in with Google" Frontend Flow</h2>
+            <p>For the end-user, the experience is exactly like a seamless OAuth login. The entire proof generation
+                happens locally in their browser so their secret remains safe.</p>
+            <div class="code-block">
+                <pre><span class="comment">// 1. You add a simple button to your frontend</span>
+&lt;button onClick={<span class="function">handleStarkAccessVerify</span>}&gt;
+  Sign in with StarkAccess
+&lt;/button&gt;
+
+<span class="comment">// 2. When clicked, use the StarkAccess SDK to generate the proof</span>
+<span class="keyword">const</span> { root, nullifier, proof } = <span class="keyword">await</span> starkAccess.<span class="function">generateProof</span>(secret);
+
+<span class="comment">// 3. Submit the result directly to your DAO Smart Contract</span>
+<span class="keyword">await</span> myDaoContract.<span class="function">cast_vote</span>(root, action_hash, nullifier, proof);</pre>
+            </div>
+            <p>No backend server is needed, no private data ever leaves the user's laptop.</p>
+        </div>
+
+        <!-- Contract Details -->
+        <div class="docs-section">
+            <h2><span>04.</span> Deployed Sepolia Contracts</h2>
+            <p>You can interact with the live StarkAccess protocol on the Starknet Sepolia testnet right now. Here are
+                the core contract addresses used in the demo below:</p>
+            <div class="kv">
+                <div class="kv-row" style="margin-bottom:8px;">
+                    <span class="kv-key">AccessManagerZK</span>
+                    <span class="kv-val">0x21a82b266af88041bb570132386bd0dc825cd7cf8b3551f9fe187462b9881e4</span>
+                </div>
+                <div class="kv-row" style="margin-bottom:8px;">
+                    <span class="kv-key">MockVerifier</span>
+                    <span class="kv-val">0x25d201b91751f734bc67b6f7c9a8078547028aa5f302e5282fe3d103495c858</span>
+                </div>
+                <div class="kv-row" style="margin-bottom:8px;">
+                    <span class="kv-key">ProtectedTreasury</span>
+                    <span class="kv-val">0x6a9b6636df830989e83c611863155093186acba7d4dc65db9798c3bd80d75ca</span>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="demo-title">Live Interactive Demo</h2>
 
         <div class="steps">
 
@@ -726,16 +961,14 @@
             <a href="https://starknet.io" target="_blank">Starknet</a>, and
             <a href="https://www.cairo-lang.org" target="_blank">Cairo</a>.
             &nbsp;|&nbsp;
-            <a href="https://github.com/starkAccess" target="_blank">GitHub</a>
+            <a href="https://github.com/moses-Dera/accessmanager-zk" target="_blank">GitHub</a>
         </footer>
     </div>
 
     <!-- starknet.js via CDN -->
     <script type="module">
-        // Import starknet.js v6 from CDN (browser-compatible)
-        // Note: starknet v9 is Node-only; browser demos use v6 CDN
-        import { RpcProvider, Account, Contract, CallData, stark } from
-            'https://cdnjs.cloudflare.com/ajax/libs/starknet.js/6.11.0/index.min.js';
+        // Import starknet.js from ESM CDN
+        import { RpcProvider, Account, Contract, CallData, stark } from 'https://esm.sh/starknet@6.11.0';
 
         // ── State ──────────────────────────────────────────────────────────────
         const state = {
@@ -755,56 +988,36 @@
             proofFelts: null,
         };
 
-        // Contract ABIs (minimal — will be filled from compiled JSON via fetch)
-        let ABIS = {};
-
-        // ── Helpers ─────────────────────────────────────────────────────────────
-        function log(id, msg, cls = '') {
-            const box = document.getElementById(`log-${id}`);
-            const line = document.createElement('div');
-            line.className = `log-line ${cls}`;
-            line.textContent = msg;
-            box.appendChild(line);
-            box.scrollTop = box.scrollHeight;
-        }
-        function setStatus(id, text, type = '') {
-            const el = document.getElementById(`status-${id}`);
-            el.textContent = text;
-            el.style.color = type === 'ok' ? 'var(--green)' : type === 'err' ? 'var(--red)' : type === 'loading' ? 'var(--yellow)' : '';
-        }
-        function setCard(id, cls) {
-            const card = document.getElementById(`card-${id}`);
-            card.classList.remove('active', 'done', 'error');
-            if (cls) card.classList.add(cls);
-        }
-        function setBalance(val) {
-            const el = document.getElementById('balance-val');
-            document.getElementById('balance-display').style.display = 'flex';
-            el.textContent = val;
-            el.classList.add('changed');
-            setTimeout(() => el.classList.remove('changed'), 600);
-        }
-        function addKV(containerId, key, val) {
-            const c = document.getElementById(containerId);
-            c.innerHTML += `<div class="kv-row"><span class="kv-key">${key}</span><span class="kv-val">${val}</span></div>`;
-        }
-        function truncate(addr) {
-            if (!addr) return '—';
-            const s = String(addr);
-            if (s.length <= 16) return s;
-            return s.slice(0, 10) + '…' + s.slice(-8);
-        }
-
-        // Try loading compiled ABIs from local dev server
-        async function loadAbi(name) {
-            try {
-                const r = await fetch(`../contracts/target/dev/${name}`);
-                if (!r.ok) throw new Error();
-                return await r.json();
-            } catch {
-                return null;
-            }
-        }
+        // Contract ABIs (minimal required for demo to pass Contract constructor)
+        let ABIS = {
+            treasury: [
+                {
+                    "type": "function",
+                    "name": "setup_role_root",
+                    "inputs": [{ "name": "root", "type": "core::felt252" }],
+                    "outputs": [],
+                    "state_mutability": "external"
+                },
+                {
+                    "type": "function",
+                    "name": "withdraw",
+                    "inputs": [
+                        { "name": "amount", "type": "core::integer::u256" },
+                        { "name": "proof", "type": "core::array::Span::<core::felt252>" },
+                        { "name": "public_inputs", "type": "core::array::Span::<core::felt252>" }
+                    ],
+                    "outputs": [{ "type": "()" }],
+                    "state_mutability": "external"
+                },
+                {
+                    "type": "function",
+                    "name": "get_balance",
+                    "inputs": [],
+                    "outputs": [{ "type": "core::integer::u256" }],
+                    "state_mutability": "view"
+                }
+            ]
+        };
 
         // ── Step 1: Connect ─────────────────────────────────────────────────────
         window.doConnect = async function () {
@@ -825,10 +1038,12 @@
             }
 
             try {
-                state.provider = new RpcProvider({ nodeUrl: rpcUrl });
-                await state.provider.getChainId();
-                state.account = new Account(state.provider, addr, pk);
-                log(1, '✅ Connected to node: ' + rpcUrl, 'ok');
+                const myProvider = new RpcProvider({ nodeUrl: rpcUrl });
+                state.provider = myProvider;
+                const chainId = await myProvider.getChainId();
+                // In v6, passing '1' as cairoVersion is highly recommended to avoid issues
+                state.account = new Account(myProvider, addr, pk, '1');
+                log(1, '✅ Connected to node: ' + rpcUrl + ' (Chain: ' + chainId + ')', 'ok');
                 log(1, '✅ Account: ' + addr, 'ok');
 
                 document.getElementById('account-bar').style.display = 'flex';
@@ -860,10 +1075,10 @@
                 state.managerAddr = "0x21a82b266af88041bb570132386bd0dc825cd7cf8b3551f9fe187462b9881e4";
                 state.treasuryAddr = "0x6a9b6636df830989e83c611863155093186acba7d4dc65db9798c3bd80d75ca";
 
-                log(2, '⏳ Fetching ABI for ProtectedTreasury...', 'info');
-                // Use starknet.js extractAbi from the RPC provider
-                const cd = await state.provider.getClassAt(state.treasuryAddr);
-                const tAbi = cd.abi;
+                log(2, '⏳ Parsing ABI for ProtectedTreasury...', 'info');
+
+                // We use the hardcoded ABI since node RPC get_class can be flaky across versions
+                const tAbi = ABIS.treasury;
                 state.treasuryAbi = tAbi;
 
                 // Create contract instance connected to account so it can transact
