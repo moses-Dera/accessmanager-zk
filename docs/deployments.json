@@ -1,11 +1,11 @@
 {
   "network": "sepolia",
   "chainId": "0x534e5f5345504f4c4941",
-  "timestamp": "2026-02-24T14:57:00.272Z",
+  "timestamp": "2026-02-28T14:04:46.302Z",
   "deployer": "0x03cf4A18b3804d42fDaf54fc9886b727779Ae4929f2142FD9f72760B85eCf55D",
   "contracts": {
-    "MockVerifier": "0x25d201b91751f734bc67b6f7c9a8078547028aa5f302e5282fe3d103495c858",
-    "AccessManagerZK": "0x21a82b266af88041bb570132386bd0dc825cd7cf8b3551f9fe187462b9881e4",
-    "ProtectedTreasury": "0x6a9b6636df830989e83c611863155093186acba7d4dc65db9798c3bd80d75ca"
+    "MockVerifier": "0x39b6a91006b1ef32eec501ba68a1fc378232a80759f0f62ae601b9e039956b9",
+    "AccessManagerZK": "0x32869a7ba6ae5b9f8f6f6414ce0d64a01e4b50db6bed08401e8239ff5595596",
+    "ProtectedTreasury": "0x60a26b252ae4c88809f2b90ddf48bd4b638cb1ea463e32327dff064127e4767"
   }
 }

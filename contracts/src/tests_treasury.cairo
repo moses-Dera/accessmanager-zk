@@ -27,10 +27,12 @@ fn deploy_access_manager(verifier: ContractAddress) -> ContractAddress {
 }
 
 fn deploy_treasury(
-    manager: ContractAddress, initial_balance: felt252, owner: ContractAddress,
+    manager: ContractAddress, initial_supply: u256, owner: ContractAddress,
 ) -> ContractAddress {
     let contract = declare("ProtectedTreasury").unwrap_syscall().contract_class();
-    let calldata = array![manager.into(), initial_balance, owner.into()];
+    let calldata = array![
+        manager.into(), initial_supply.low.into(), initial_supply.high.into(), owner.into(),
+    ];
     let (addr, _) = contract.deploy(@calldata).unwrap_syscall();
     addr
 }
@@ -40,7 +42,8 @@ fn full_setup() -> (ContractAddress, IProtectedTreasuryDispatcher, IAccessManage
     let owner: ContractAddress = 0xABCD.try_into().unwrap();
     let verifier = deploy_mock_verifier();
     let manager = deploy_access_manager(verifier);
-    let treasury = deploy_treasury(manager, 10000, owner);
+    let initial_supply: u256 = 10000;
+    let treasury = deploy_treasury(manager, initial_supply, owner);
 
     let t = IProtectedTreasuryDispatcher { contract_address: treasury };
     let m = IAccessManagerZKDispatcher { contract_address: manager };
@@ -58,17 +61,21 @@ fn test_treasury_deployment() {
 
 #[test]
 fn test_treasury_deposit() {
-    let (_, t, _) = full_setup();
+    let (owner, t, _) = full_setup();
+    start_cheat_caller_address(t.contract_address, owner);
     t.deposit(500);
+    stop_cheat_caller_address(t.contract_address);
     assert(t.get_balance() == 10500, 'Deposit amount wrong');
 }
 
 #[test]
 fn test_treasury_multi_deposit() {
-    let (_, t, _) = full_setup();
+    let (owner, t, _) = full_setup();
+    start_cheat_caller_address(t.contract_address, owner);
     t.deposit(100);
     t.deposit(200);
     t.deposit(300);
+    stop_cheat_caller_address(t.contract_address);
     assert(t.get_balance() == 10600, 'Multi-deposit wrong');
 }
 
@@ -89,7 +96,7 @@ fn test_setup_role_root_by_owner() {
 }
 
 #[test]
-#[should_panic(expected: ('Unauthorized: Not owner',))]
+#[should_panic(expected: ('Caller is not the owner',))]
 fn test_setup_role_root_not_owner_reverts() {
     let (_, t, _) = full_setup();
     let random_user: ContractAddress = 0x1234.try_into().unwrap();
@@ -204,7 +211,7 @@ fn test_withdraw_empty_proof_reverts() {
 }
 
 #[test]
-#[should_panic(expected: ('Insufficient balance',))]
+#[should_panic(expected: ('ERC20: insufficient balance',))]
 fn test_withdraw_insufficient_balance_reverts() {
     let (owner, t, _) = full_setup();
     let root: felt252 = 0x77777777;

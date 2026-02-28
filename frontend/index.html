@@ -770,6 +770,13 @@
             </div>
             <p>There is no complex ZK math in your codebase. You treat exactly like verifying a traditional Web2 API JWT
                 token.</p>
+            <div
+                style="margin-top:20px; padding:12px 16px; background:rgba(255,255,255,0.05); border-left:3px solid var(--accent); border-radius:6px; font-size:13px; color:var(--muted)">
+                <strong>Note on Smart Contract Standards:</strong> The demo contracts currently deployed use custom,
+                simplified state variables for access control and balances. For mainnet production, these contracts are
+                being refactored to seamlessly inherit from <strong>OpenZeppelin's Ownable and ERC20</strong> components
+                for battle-tested, standardized security.
+            </div>
         </div>
 
         <!-- Frontend Integration -->
@@ -966,9 +973,10 @@
     </div>
 
     <!-- starknet.js via CDN -->
-    <script type="module">
-        // Import starknet.js from ESM CDN
-        import { RpcProvider, Account, Contract, CallData, stark } from 'https://esm.sh/starknet@6.11.0';
+    <script src="https://cdn.jsdelivr.net/npm/starknet@9.2.1/dist/index.global.js"></script>
+    <script>
+        // Use global window.starknet object
+        const { RpcProvider, Account, Contract, CallData, stark } = window.starknet;
 
         // ── State ──────────────────────────────────────────────────────────────
         const state = {
@@ -1019,6 +1027,57 @@
             ]
         };
 
+        // ── UI Helpers ─────────────────────────────────────────────────────────
+        function setStatus(stepNum, text, stateClass = '') {
+            const el = document.getElementById(`status-${stepNum}`);
+            if (!el) return;
+            el.textContent = text;
+            el.className = 'card-status ' + stateClass;
+        }
+
+        function setCard(stepNum, stateClass) {
+            const el = document.getElementById(`card-${stepNum}`);
+            if (!el) return;
+            el.className = 'card ' + stateClass;
+        }
+
+        function log(stepNum, msg, type = 'info') {
+            const box = document.getElementById(`log-${stepNum}`);
+            if (!box) return;
+            const line = document.createElement('div');
+            line.className = 'log-line ' + type;
+            line.textContent = msg;
+            box.appendChild(line);
+            box.style.display = 'block';
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function addKV(containerId, key, val) {
+            const c = document.getElementById(containerId);
+            if (!c) return;
+            const row = document.createElement('div');
+            row.className = 'kv-row';
+            row.innerHTML = `<span class="kv-key">${key}</span><span class="kv-val">${val}</span>`;
+            c.appendChild(row);
+        }
+
+        function truncate(str, keep = 6) {
+            if (!str || str.length <= keep * 2) return str;
+            return str.slice(0, keep) + '…' + str.slice(-keep);
+        }
+
+        function setBalance(text) {
+            const disp = document.getElementById('balance-display');
+            const val = document.getElementById('balance-val');
+            if (!disp || !val) return;
+            disp.style.display = 'flex';
+            val.textContent = text;
+
+            val.classList.remove('changed');
+            void val.offsetWidth; // trigger reflow
+            val.classList.add('changed');
+        }
+
         // ── Step 1: Connect ─────────────────────────────────────────────────────
         window.doConnect = async function () {
             const btn = document.getElementById('btn-connect');
@@ -1038,7 +1097,8 @@
             }
 
             try {
-                const myProvider = new RpcProvider({ nodeUrl: rpcUrl });
+                // Use 'latest' block tag to prevent Alchemy from failing on 'pending' blocks
+                const myProvider = new RpcProvider({ nodeUrl: rpcUrl, blockIdentifier: 'latest' });
                 state.provider = myProvider;
                 const chainId = await myProvider.getChainId();
                 // In v6, passing '1' as cairoVersion is highly recommended to avoid issues
@@ -1122,7 +1182,7 @@
             try {
                 log(3, '📡 Calling setup_role_root…', 'info');
                 log(3, '   Merkle Root: 0x027b2068…', 'info');
-                const tx = await state.treasury.setup_role_root(MERKLE_ROOT);
+                const tx = await state.treasury.setup_role_root(MERKLE_ROOT.toString());
                 await state.provider.waitForTransaction(tx.transaction_hash);
                 log(3, '✅ Merkle root registered on AccessManagerZK', 'ok');
                 addKV('setup-kv', 'Merkle Root', '0x027b2068fbe2…ba75');
@@ -1185,13 +1245,13 @@
             setStatus(5, 'pending tx…', 'loading');
 
             try {
-                const publicInputs = [state.root, state.actionHash, state.nullifier];
+                const publicInputs = [state.root.toString(), state.actionHash.toString(), state.nullifier.toString()];
                 const before = await state.treasury.get_balance();
                 log(5, '💰 Balance before: ' + before, 'info');
                 setBalance(before.toString() + ' tokens');
 
                 log(5, '📨 Submitting withdraw(500, proof, publicInputs)…', 'info');
-                const tx = await state.treasury.withdraw(500n, state.proofFelts, publicInputs);
+                const tx = await state.treasury.withdraw(500, state.proofFelts, publicInputs);
                 log(5, '⏳ Tx: ' + tx.transaction_hash, 'info');
                 await state.provider.waitForTransaction(tx.transaction_hash);
 
@@ -1218,10 +1278,10 @@
             setStatus(6, 'testing…', 'loading');
 
             log(6, '⚠ Re-submitting same proof + nullifier…', 'warn');
-            const publicInputs = [state.root, state.actionHash, state.nullifier];
+            const publicInputs = [state.root.toString(), state.actionHash.toString(), state.nullifier.toString()];
 
             try {
-                const tx = await state.treasury.withdraw(500n, state.proofFelts, publicInputs);
+                const tx = await state.treasury.withdraw(500, state.proofFelts, publicInputs);
                 await state.provider.waitForTransaction(tx.transaction_hash);
 
                 log(6, '🚨 REPLAY SUCCEEDED — SECURITY FAILURE!', 'err');

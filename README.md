@@ -307,6 +307,12 @@ nargo codegen-verifier
 
 ---
 
+## Future Work
+
+- **OpenZeppelin Integration:** The current V1 demo contracts use simplified, standalone variables for access control and pseudo-balances for speed. For the production mainnet launch, `ProtectedTreasury.cairo` and `AccessManagerZK.cairo` will be refactored to securely inherit from **OpenZeppelin's Ownable** and **ERC20** components to adhere to industry standard safety practices.
+
+---
+
 ## License
 
 MIT
