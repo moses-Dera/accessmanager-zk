@@ -82,9 +82,11 @@ accessmanager-zk/
 │   │   ├── access_manager.cairo  # Core protocol contract
 │   │   ├── verifier.cairo        # Groth16 verifier stub (production path)
 │   │   ├── mock_verifier.cairo   # MockVerifier for demo/testing
-│   │   ├── protected_treasury.cairo  # Example DApp integration
+│   │   ├── protected_treasury.cairo # Example: Private Treasury
+│   │   ├── private_voting.cairo  # Example: Anonymous Voting
 │   │   ├── tests.cairo           # AccessManagerZK unit tests
-│   │   └── tests_treasury.cairo  # ProtectedTreasury unit tests
+│   │   ├── tests_treasury.cairo  # ProtectedTreasury unit tests
+│   │   └── tests_voting.cairo    # PrivateVoting unit tests
 │   └── Scarb.toml
 ├── demo/
 │   ├── index.js                  # End-to-end demo script
@@ -137,7 +139,7 @@ Artifacts appear in `contracts/target/dev/`.
 
 ---
 
-Expected: **18 tests passed, 0 failed**
+Expected: **23 tests passed, 0 failed**
 
 ```
 [PASS] tests::test_constructor
@@ -148,8 +150,9 @@ Expected: **18 tests passed, 0 failed**
 [PASS] tests::test_consume_replay
 [PASS] tests_treasury::test_treasury_deployment
 [PASS] tests_treasury::test_treasury_deposit
-[PASS] tests_treasury::test_treasury_multi_deposit
-... (18 total)
+[PASS] tests_voting::test_cast_vote_anonymous
+[PASS] tests_voting::test_double_vote_reverts
+... (23 total)
 ```
 
 ---
@@ -187,8 +190,9 @@ node index.js
 3. ✅ Deploys `AccessManagerZK` contract (configured with MockVerifier)
 4. ✅ Deploys `ProtectedTreasury` DApp (configured with AccessManagerZK)
 5. ✅ Treasury owner registers a Merkle root of authorized users
-6. ✅ User submits simulated ZK proof → successfully withdraws 500 tokens
+6. ✅ User generates **real ZK proof** locally → successfully withdraws 500 tokens
 7. ✅ Replay attack: same proof submitted again → **reverts** (nullifier already used)
+8. ✅ **Bonus**: User casts an anonymous vote using the same credentials on the Voting demo.
 
 **Expected output:**
 ```

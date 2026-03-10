@@ -1,7 +1,11 @@
 #[starknet::contract]
 mod PrivateVoting {
-    use starknet::{ContractAddress, get_caller_address, get_contract_address};
     use openzeppelin::access::ownable::OwnableComponent;
+    use starknet::storage::{
+        Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+        StoragePointerWriteAccess,
+    };
+    use starknet::{ContractAddress, get_caller_address, get_contract_address};
     use super::super::interfaces::{
         IAccessManagerZKDispatcher, IAccessManagerZKDispatcherTrait, IPrivateVoting,
     };
@@ -16,9 +20,9 @@ mod PrivateVoting {
     struct Storage {
         access_manager: ContractAddress,
         proposal_count: u32,
-        proposals: LegacyMap<u32, felt252>,
-        votes_yes: LegacyMap<u32, u32>,
-        votes_no: LegacyMap<u32, u32>,
+        proposals: Map<u32, felt252>,
+        votes_yes: Map<u32, u32>,
+        votes_no: Map<u32, u32>,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
     }
@@ -45,7 +49,9 @@ mod PrivateVoting {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, access_manager_addr: ContractAddress, owner: ContractAddress) {
+    fn constructor(
+        ref self: ContractState, access_manager_addr: ContractAddress, owner: ContractAddress,
+    ) {
         self.access_manager.write(access_manager_addr);
         self.ownable.initializer(owner);
         self.proposal_count.write(0);
@@ -77,18 +83,14 @@ mod PrivateVoting {
             public_inputs: Span<felt252>,
         ) {
             // Verify authorization via AccessManagerZK
-            // Passing the proposal_id as the action_hash to prevent double-voting on the same proposal
+            // Passing the proposal_id as the action_hash to prevent double-voting on the same
+            // proposal
             let manager = IAccessManagerZKDispatcher {
                 contract_address: self.access_manager.read(),
             };
-            
+
             // Note: role_id is the contract address
-            manager.consume(
-                get_contract_address().into(),
-                proposal_id, 
-                proof,
-                public_inputs
-            );
+            manager.consume(get_contract_address().into(), proposal_id, proof, public_inputs);
 
             // Execute vote
             let p_id: u32 = proposal_id.try_into().unwrap();
