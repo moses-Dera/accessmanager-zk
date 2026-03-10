@@ -2,7 +2,7 @@
   "dependencies": {
     "@noir-lang/backend_barretenberg": "^0.36.0",
     "@noir-lang/noir_js": "^1.0.0-beta.19",
-    "vercel": "^50.23.0"
+    "vercel": "^50.29.0"
   },
   "scripts": {
     "build": "esbuild prover.js --bundle --minify --outfile=dist/prover.bundle.js --format=esm"

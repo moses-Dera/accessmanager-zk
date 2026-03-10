@@ -11,8 +11,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔐</text></svg>">
+    <link rel="icon" href="assets/logo.png">
     <style>
         /* ── Variables ── */
         :root {
@@ -107,12 +106,17 @@
             width: 48px;
             height: 48px;
             border-radius: 14px;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
             box-shadow: 0 0 30px rgba(79, 158, 255, 0.4);
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .logo-text {
@@ -647,7 +651,9 @@
         <!-- Header -->
         <header>
             <div class="logo">
-                <!-- <div class="logo-icon">🔐</div> -->
+                <div class="logo-icon">
+                    <img src="assets/logo.png" alt="StarkAccess Logo">
+                </div>
                 <div class="logo-text">Stark<span>Access</span></div>
             </div>
             <h1>Anonymous Access Control<br>with <em>Zero-Knowledge Proofs</em></h1>
@@ -838,13 +844,15 @@ access_manager.<span class="function">consume</span>(
                     <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">RPC
                         URL</label>
                     <input id="rpc-url" type="text"
+                        value="https://starknet-sepolia.g.alchemy.com/v2/2SbdpIrlUjQIJyWtdStmd"
                         placeholder="https://starknet-sepolia.public... / http://127.0.0.1:5050"
                         style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:inherit;outline:none;">
                 </div>
                 <div>
                     <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">Account
                         Address</label>
-                    <input id="acct-addr" type="text" placeholder="0x..."
+                    <input id="acct-addr" type="text"
+                        value="0x03cf4A18b3804d42fDaf54fc9886b727779Ae4929f2142FD9f72760B85eCf55D" placeholder="0x..."
                         style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;">
                 </div>
                 <div>
@@ -1157,8 +1165,8 @@ access_manager.<span class="function">consume</span>(
             try {
                 // Hardcoded Sepolia Addresses from recent deployment
                 state.verifierAddr = "0x39b6a91006b1ef32eec501ba68a1fc378232a80759f0f62ae601b9e039956b9";
-                state.managerAddr = "0x32869a7ba6ae5b9f8f6f6414ce0d64a01e4b50db6bed08401e8239ff5595596";
-                state.treasuryAddr = "0x60a26b252ae4c88809f2b90ddf48bd4b638cb1ea463e32327dff064127e4767";
+                state.managerAddr = "0x144abdbdbef77fea62aa2fc545e903c3ab3f5bdd95cdd74b167b5526558c019";
+                state.treasuryAddr = "0x2916e9f5779b537619b9c5695321fd0c16409234b73714a053f80b239d73540";
 
                 log(2, '⏳ Parsing ABI for ProtectedTreasury...', 'info');
 

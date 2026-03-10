@@ -69,7 +69,7 @@ async function main() {
     const mCasm = readJson('accessmanager_zk_contracts_AccessManagerZK.compiled_contract_class.json');
     const mDeploy = await account.declareAndDeploy({
         contract: mSierra, casm: mCasm,
-        constructorCalldata: CallData.compile([deployments.MockVerifier]),
+        constructorCalldata: CallData.compile([deployments.MockVerifier, ACCOUNT_ADDRESS]),
     });
     deployments.AccessManagerZK = mDeploy.deploy.contract_address;
     console.log(`✅ AccessManagerZK: ${deployments.AccessManagerZK}`);
@@ -85,7 +85,7 @@ async function main() {
         contract: tSierra, casm: tCasm,
         constructorCalldata: CallData.compile([
             deployments.AccessManagerZK,
-            initialBalance,
+            require('starknet').cairo.uint256(initialBalance),
             ACCOUNT_ADDRESS, // owner
         ]),
     });

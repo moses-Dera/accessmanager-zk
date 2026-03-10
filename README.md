@@ -215,7 +215,7 @@ node index.js
 
 You can try the fully functioning **Interactive Web Demo** (which connects to the Sepolia testnet and generates real Noir ZK proofs directly in your browser) by opening:
 
-👉 **[frontend/index.html](./frontend/index.html)** in your browser.
+👉 **[Live Vercel Demo](https://frontend-three-umber-41.vercel.app/)**
 
 *(No build required, the ZK Prover is pre-bundled).*
 
