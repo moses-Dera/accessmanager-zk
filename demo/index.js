@@ -57,13 +57,12 @@ async function main() {
     const treasurySierra = readJson('accessmanager_zk_contracts_ProtectedTreasury.contract_class.json');
     const treasuryCasm = readJson('accessmanager_zk_contracts_ProtectedTreasury.compiled_contract_class.json');
 
-    const treasuryABI = treasurySierra.abi;
-    const treasuryCallData = new CallData(treasuryABI);
-    const treasuryConstructorCalldata = treasuryCallData.compile('constructor', {
-        access_manager_addr: managerAddress,
-        initial_supply: 10000n,
-        owner: ACCOUNT_ADDRESS
-    });
+    // Manually split u256 for the constructor [addr, low, high, owner]
+    const treasuryConstructorCalldata = [
+        managerAddress,
+        10000, 0,
+        ACCOUNT_ADDRESS
+    ];
 
     const treasuryDeploy = await account.declareAndDeploy({
         contract: treasurySierra,
@@ -77,9 +76,7 @@ async function main() {
 
     // ─── Step 3: Protocol Setup (Register Root) ──────────────────────────────────
     console.log('\n📡 Registering Merkle Root via SDK Client...');
-    const treasuryContract = new Contract(treasurySierra.abi, treasuryAddress, account);
-    // setup_role_root expects a single felt252
-    const setupTx = await treasuryContract.setup_role_root(root);
+    const setupTx = await sdkClient.registerRole(root);
     await provider.waitForTransaction(setupTx.transaction_hash);
     console.log('✅ Role root successfully registered!');
 
@@ -88,7 +85,7 @@ async function main() {
     const circuitPath = path.join(__dirname, '../circuits/target/accessmanager_zk_circuits.json');
     const circuitJson = JSON.parse(fs.readFileSync(circuitPath, 'utf-8'));
 
-    // In the circuit, action_hash is matches our demo identity
+    // In the circuit, action_hash matches our demo identity
     const action = 'withdraw_500_tokens';
     const proofPayload = await StarkAccessProver.generateProof(
         identity,
@@ -100,27 +97,37 @@ async function main() {
 
     console.log(`🔐 Nullifier (Action Hash): ${proofPayload.nullifier}`);
 
-    const balanceBefore = await treasuryContract.get_balance();
-    console.log(`💰 Treasury Balance Before: ${balanceBefore.toString()}`);
+    // CallContract for balance
+    const balanceRes = await account.callContract({
+        contractAddress: treasuryAddress,
+        entrypoint: 'get_balance',
+        calldata: []
+    });
+    console.log(`💰 Treasury Balance Before: ${BigInt(balanceRes[0]).toString()}`);
 
     try {
         console.log(`⏳ Submitting withdrawal request...`);
-        // The contract's withdraw expects: (amount: u256, proof: Span, public_inputs: Span)
-        // Public inputs must match: [root, action_hash, nullifier]
-        // Note: the action_hash used in SDK matches the one our circuit expects.
-
         const actionHashBigInt = StarkAccessProver.hashString(action);
 
-        const withdrawTx = await treasuryContract.withdraw(
-            [500, 0], // amount (u256 as two felts)
-            [1n],     // proof (Span)
-            [root, actionHashBigInt, proofPayload.nullifier] // public_inputs (Span)
-        );
+        // Hand-crafted calldata for Cairo: (amount: u256, proof: Span, public_inputs: Span)
+        const withdrawTx = await account.execute({
+            contractAddress: treasuryAddress,
+            entrypoint: 'withdraw',
+            calldata: [
+                '500', '0', // amount (u256 as two felts)
+                '1', '1',  // proof (Span: length 1, value 1)
+                '3', root.toString(), actionHashBigInt.toString(), proofPayload.nullifier.toString()
+            ]
+        });
         await provider.waitForTransaction(withdrawTx.transaction_hash);
         console.log('✅ Withdrawal Successful!');
 
-        const balanceAfter = await treasuryContract.get_balance();
-        console.log(`💰 Treasury Balance After: ${balanceAfter.toString()}`);
+        const balanceAfterRes = await account.callContract({
+            contractAddress: treasuryAddress,
+            entrypoint: 'get_balance',
+            calldata: []
+        });
+        console.log(`💰 Treasury Balance After: ${BigInt(balanceAfterRes[0]).toString()}`);
     } catch (e) {
         console.error('❌ Withdrawal failed:', e.message || e);
     }
