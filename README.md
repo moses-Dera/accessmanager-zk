@@ -313,6 +313,7 @@ fn my_protected_action(
 | Replay attacks | Nullifiers tracked on-chain; each proof usable exactly once |
 | Cross-action replay | `nullifier = hash(secret, action_hash)` binds proof to specific action |
 | Invalid proofs | On-chain verifier rejects proofs with wrong public inputs |
+| Contract vulnerabilities | Built on top of **OpenZeppelin** standard components (Ownable, ERC20) for battle-tested security |
 
 Full details: [`docs/threat-model.md`](./docs/threat-model.md)
 
@@ -347,7 +348,7 @@ nargo codegen-verifier
 ## Tech Stack
 
 - **ZK Circuit:** Noir (Barretenberg backend, Honk/Groth16)
-- **Smart Contracts:** Cairo 2 / Starknet
+- **Smart Contracts:** Cairo 2 / Starknet, **OpenZeppelin (Cairo)**
 - **Build Tools:** Scarb, Starknet Foundry (snforge)
 - **Demo:** Node.js + starknet.js v9
 
