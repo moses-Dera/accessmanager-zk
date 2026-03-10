@@ -35,15 +35,15 @@ cd contracts && scarb build && cd ..
 cd demo && node ../scripts/deploy_sepolia.js
 ```
 
-### Latest Deployment
+### Latest Deployment (Sepolia)
+**Date:** 2026-03-10
+**Deployer:** `0x03cf4A18b380...eCf55D`
 
 | Contract | Address | Explorer |
 |---|---|---|
-| MockVerifier | TBD — run deploy_sepolia.js | — |
-| AccessManagerZK | TBD | — |
-| ProtectedTreasury | TBD | — |
-
-> **Note:** After first deployment, update the table above with addresses from `deployments.json`.
+| MockVerifier | `0x46fc35838e2fe2976b1ddf7423d6bf2c0c32f696286c3b78f51bcffe7f2dff1` | [Voyager](https://sepolia.voyager.online/contract/0x46fc35838e2fe2976b1ddf7423d6bf2c0c32f696286c3b78f51bcffe7f2dff1) |
+| AccessManagerZK | `0x144abdbdbef77fea62aa2fc545e903c3ab3f5bdd95cdd74b167b5526558c019` | [Voyager](https://sepolia.voyager.online/contract/0x144abdbdbef77fea62aa2fc545e903c3ab3f5bdd95cdd74b167b5526558c019) |
+| ProtectedTreasury | `0x2916e9f5779b537619b9c5695321fd0c16409234b73714a053f80b239d73540` | [Voyager](https://sepolia.voyager.online/contract/0x2916e9f5779b537619b9c5695321fd0c16409234b73714a053f80b239d73540) |
 
 ---
 
