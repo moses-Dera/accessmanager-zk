@@ -137,14 +137,7 @@ Artifacts appear in `contracts/target/dev/`.
 
 ---
 
-### 3. Run Contract Tests
-
-```bash
-cd contracts
-scarb test
-```
-
-Expected: **8 tests passed, 0 failed**
+Expected: **18 tests passed, 0 failed**
 
 ```
 [PASS] tests::test_constructor
@@ -155,6 +148,8 @@ Expected: **8 tests passed, 0 failed**
 [PASS] tests::test_consume_replay
 [PASS] tests_treasury::test_treasury_deployment
 [PASS] tests_treasury::test_treasury_deposit
+[PASS] tests_treasury::test_treasury_multi_deposit
+... (18 total)
 ```
 
 ---
@@ -304,12 +299,6 @@ nargo codegen-verifier
 - **Smart Contracts:** Cairo 2 / Starknet
 - **Build Tools:** Scarb, Starknet Foundry (snforge)
 - **Demo:** Node.js + starknet.js v9
-
----
-
-## Future Work
-
-- **OpenZeppelin Integration:** The current V1 demo contracts use simplified, standalone variables for access control and pseudo-balances for speed. For the production mainnet launch, `ProtectedTreasury.cairo` and `AccessManagerZK.cairo` will be refactored to securely inherit from **OpenZeppelin's Ownable** and **ERC20** components to adhere to industry standard safety practices.
 
 ---
 

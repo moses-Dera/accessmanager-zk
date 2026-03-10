@@ -25,10 +25,14 @@ struct Storage {
 fn constructor(
     ref self: ContractState,
     access_manager_addr: ContractAddress,
-    owner: ContractAddress,   // Pass explicitly — do NOT use get_caller_address() with UDC
+    initial_supply: u256,
+    owner: ContractAddress,
 ) {
     self.access_manager.write(access_manager_addr);
-    self.owner.write(owner);
+    // Initialize OZ Ownable & ERC20
+    self.ownable.initializer(owner);
+    self.erc20.initializer("Protected Token", "PTK");
+    self.erc20._mint(owner, initial_supply);
 }
 ```
 
@@ -42,8 +46,7 @@ Call this once after deployment to register your authorized user set:
 
 ```cairo
 fn setup_role_root(ref self: ContractState, root: felt252) {
-    let caller = get_caller_address();
-    assert(caller == self.owner.read(), 'Unauthorized: Not owner');
+    self.ownable.assert_only_owner();
 
     // Your contract calls set_role_root — so YOUR contract address becomes the role_id
     let manager = IAccessManagerZKDispatcher {

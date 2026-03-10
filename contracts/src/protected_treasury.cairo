@@ -67,17 +67,18 @@ mod ProtectedTreasury {
             manager.set_role_root(root);
         }
 
-        // Anyone can deposit tokens into the treasury
-        fn deposit(ref self: ContractState, amount: felt252) {
+        // Anyone can deposit tokens into the treasury. 
+        // Requires prior approval from the caller to the treasury contract address.
+        fn deposit(ref self: ContractState, amount: u256) {
             let caller = get_caller_address();
-            let amount_u256: u256 = amount.into();
-            self.erc20._transfer(caller, get_contract_address(), amount_u256);
+            // Use internal _transfer to move funds into the treasury address
+            self.erc20._transfer(caller, get_contract_address(), amount);
         }
 
         // The protected action: Withdrawing funds via a ZK proof
         fn withdraw(
             ref self: ContractState,
-            amount: felt252,
+            amount: u256,
             proof: Span<felt252>,
             public_inputs: Span<felt252>,
         ) {
@@ -100,14 +101,12 @@ mod ProtectedTreasury {
                 );
 
             // 2. Execute Protected Action using standard ERC20 transfer
-            let amount_u256: u256 = amount.into();
-            self.erc20._transfer(get_contract_address(), caller, amount_u256);
+            self.erc20._transfer(get_contract_address(), caller, amount);
         }
 
         // Helper to check treasury balance
-        fn get_balance(self: @ContractState) -> felt252 {
-            let bal: u256 = self.erc20.balance_of(get_contract_address());
-            bal.low.into()
+        fn get_balance(self: @ContractState) -> u256 {
+            self.erc20.balance_of(get_contract_address())
         }
     }
 }

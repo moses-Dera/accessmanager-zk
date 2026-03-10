@@ -87,8 +87,8 @@ Reference DApp integration. Demonstrates:
 - `withdraw(amount, proof, public_inputs)` — protected function gated by ZK proof
 - Replay protection is automatic via AccessManagerZK's nullifier tracking
 
-> [!NOTE] 
-> **Future Work (OpenZeppelin Integration):** The current `ProtectedTreasury` contract uses a bespoke, simplistic `owner` storage variable and internal `balance` accounting for demonstration purposes. In a production environment, this contract will be refactored to seamlessly inherit from **OpenZeppelin's `Ownable`** component for standardized access control on the `setup_role_root` function, and **OpenZeppelin's `ERC20`** component for managing real token deposits and withdrawals. These components were omitted from the initial V1 testnet deployment to prioritize deploying the core ZK proof verification logic within hackathon time constraints.
+> [!TIP] 
+> **Standardization:** `ProtectedTreasury` and `AccessManagerZK` leverage **OpenZeppelin's `Ownable`** and **`ERC20`** components. This ensures industry-standard safety for ownership management and token interactions, while the ZK layer provides the unique privacy-preserving authorization.
 
 ---
 

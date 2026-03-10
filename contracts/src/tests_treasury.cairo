@@ -9,6 +9,7 @@ use super::interfaces::{
     IAccessManagerZKDispatcher, IAccessManagerZKDispatcherTrait, IProtectedTreasuryDispatcher,
     IProtectedTreasuryDispatcherTrait, IVerifierDispatcher, IVerifierDispatcherTrait,
 };
+use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 
 // ─── Deploy Helpers
 // ────────────────────────────────────────────────────────────
@@ -19,9 +20,9 @@ fn deploy_mock_verifier() -> ContractAddress {
     addr
 }
 
-fn deploy_access_manager(verifier: ContractAddress) -> ContractAddress {
+fn deploy_access_manager(verifier: ContractAddress, owner: ContractAddress) -> ContractAddress {
     let contract = declare("AccessManagerZK").unwrap_syscall().contract_class();
-    let calldata = array![verifier.into()];
+    let calldata = array![verifier.into(), owner.into()];
     let (addr, _) = contract.deploy(@calldata).unwrap_syscall();
     addr
 }
@@ -41,7 +42,7 @@ fn deploy_treasury(
 fn full_setup() -> (ContractAddress, IProtectedTreasuryDispatcher, IAccessManagerZKDispatcher) {
     let owner: ContractAddress = 0xABCD.try_into().unwrap();
     let verifier = deploy_mock_verifier();
-    let manager = deploy_access_manager(verifier);
+    let manager = deploy_access_manager(verifier, owner);
     let initial_supply: u256 = 10000;
     let treasury = deploy_treasury(manager, initial_supply, owner);
 
@@ -56,27 +57,39 @@ fn full_setup() -> (ContractAddress, IProtectedTreasuryDispatcher, IAccessManage
 #[test]
 fn test_treasury_deployment() {
     let (_, t, _) = full_setup();
-    assert(t.get_balance() == 10000, 'Initial balance is wrong');
+    assert(t.get_balance() == 10000_u256, 'Initial balance is wrong');
 }
 
 #[test]
 fn test_treasury_deposit() {
     let (owner, t, _) = full_setup();
+    // In full_setup, owner gets initial_supply tokens.
+    // They must approve the treasury to Spend them.
+    let erc20 = openzeppelin::token::erc20::interface::IERC20Dispatcher {
+        contract_address: t.contract_address
+    };
+
     start_cheat_caller_address(t.contract_address, owner);
-    t.deposit(500);
+    erc20.approve(t.contract_address, 500_u256);
+    t.deposit(500_u256);
     stop_cheat_caller_address(t.contract_address);
-    assert(t.get_balance() == 10500, 'Deposit amount wrong');
+    assert(t.get_balance() == 10500_u256, 'Deposit amount wrong');
 }
 
 #[test]
 fn test_treasury_multi_deposit() {
     let (owner, t, _) = full_setup();
+    // Approval for multi-deposit
+    let erc20 = openzeppelin::token::erc20::interface::IERC20Dispatcher {
+        contract_address: t.contract_address
+    };
     start_cheat_caller_address(t.contract_address, owner);
-    t.deposit(100);
-    t.deposit(200);
-    t.deposit(300);
+    erc20.approve(t.contract_address, 600_u256);
+    t.deposit(100_u256);
+    t.deposit(200_u256);
+    t.deposit(300_u256);
     stop_cheat_caller_address(t.contract_address);
-    assert(t.get_balance() == 10600, 'Multi-deposit wrong');
+    assert(t.get_balance() == 10600_u256, 'Multi-deposit wrong');
 }
 
 // ─── Role Setup
@@ -127,10 +140,10 @@ fn test_withdraw_valid_proof() {
     let public_inputs = array![root, action_hash, nullifier].span();
 
     let balance_before = t.get_balance();
-    t.withdraw(500, proof, public_inputs);
+    t.withdraw(500_u256, proof, public_inputs);
     let balance_after = t.get_balance();
 
-    assert(balance_before - balance_after == 500, 'Withdraw amount wrong');
+    assert(balance_before - balance_after == 500_u256, 'Withdraw amount wrong');
 }
 
 #[test]
@@ -141,10 +154,10 @@ fn test_withdraw_updates_balance_correctly() {
 
     let action_hash: felt252 = 999;
     // Use two different nullifiers for two separate withdrawals
-    t.withdraw(100, array![1_felt252].span(), array![root, action_hash, 0x1111].span());
-    t.withdraw(200, array![1_felt252].span(), array![root, action_hash, 0x2222].span());
+    t.withdraw(100_u256, array![1_felt252].span(), array![root, action_hash, 0x1111].span());
+    t.withdraw(200_u256, array![1_felt252].span(), array![root, action_hash, 0x2222].span());
 
-    assert(t.get_balance() == 9700, 'Balance after 2 withdrawals');
+    assert(t.get_balance() == 9700_u256, 'Balance after 2 withdrawals');
 }
 
 #[test]
@@ -160,10 +173,10 @@ fn test_withdraw_replay_attack_reverts() {
     let public_inputs = array![root, action_hash, nullifier].span();
 
     // First withdrawal succeeds
-    t.withdraw(100, proof, public_inputs);
+    t.withdraw(100_u256, proof, public_inputs);
 
     // Second with same nullifier must fail
-    t.withdraw(100, array![1_felt252].span(), array![root, action_hash, nullifier].span());
+    t.withdraw(100_u256, array![1_felt252].span(), array![root, action_hash, nullifier].span());
 }
 
 #[test]
@@ -179,7 +192,7 @@ fn test_withdraw_wrong_root_reverts() {
     // Root in public_inputs doesn't match stored root
     let public_inputs = array![wrong_root, action_hash, 0x9999].span();
 
-    t.withdraw(100, proof, public_inputs);
+    t.withdraw(100_u256, proof, public_inputs);
 }
 
 #[test]
@@ -193,7 +206,7 @@ fn test_withdraw_wrong_action_hash_reverts() {
     let proof = array![1_felt252].span();
     let public_inputs = array![root, wrong_action, 0x7777].span();
 
-    t.withdraw(100, proof, public_inputs);
+    t.withdraw(100_u256, proof, public_inputs);
 }
 
 #[test]
@@ -207,7 +220,7 @@ fn test_withdraw_empty_proof_reverts() {
     let proof = array![].span(); // Empty proof — MockVerifier rejects
     let public_inputs = array![root, action_hash, 0x4444].span();
 
-    t.withdraw(100, proof, public_inputs);
+    t.withdraw(100_u256, proof, public_inputs);
 }
 
 #[test]
@@ -222,5 +235,5 @@ fn test_withdraw_insufficient_balance_reverts() {
     let public_inputs = array![root, action_hash, 0x8888].span();
 
     // Try to withdraw more than balance (10000)
-    t.withdraw(99999, proof, public_inputs);
+    t.withdraw(99999_u256, proof, public_inputs);
 }

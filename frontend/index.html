@@ -746,36 +746,30 @@
         </div>
 
         <!-- Smart Contract Integration -->
-        <div class="docs-section">
-            <h2><span>02.</span> Smart Contract Integration</h2>
             <p>Integrating StarkAccess into your Cairo smart contract takes just one line of code. You simply call the
-                <code>verify_proof_and_consume</code> function on the Access Manager.
+                <code>consume</code> function on the Access Manager.
             </p>
             <div class="code-block">
-                <pre><span class="comment">// 1. Initialize the Access Manager Dispatcher</span>
-<span class="keyword">let</span> access_manager = IAccessManagerDispatcher {
+                <pre><span class="keyword">let</span> access_manager = IAccessManagerZKDispatcher {
     contract_address: self.starkaccess_address.read()
 };
 
 <span class="comment">// 2. Ask StarkAccess to verify the proof!</span>
 <span class="comment">// This checks the ZK proof AND prevents double-actions via the nullifier</span>
-<span class="keyword">let</span> is_valid = access_manager.<span class="function">verify_proof_and_consume</span>(
-    root, 
+access_manager.<span class="function">consume</span>(
+    get_contract_address().into(), // role_id
     action_hash, 
-    nullifier, 
-    proof
-);
-
-<span class="function">assert</span>(is_valid, <span class="string">'UNAUTHORIZED_OR_ALREADY_USED'</span>);</pre>
+    proof,
+    public_inputs
+);</pre>
             </div>
             <p>There is no complex ZK math in your codebase. You treat exactly like verifying a traditional Web2 API JWT
                 token.</p>
             <div
                 style="margin-top:20px; padding:12px 16px; background:rgba(255,255,255,0.05); border-left:3px solid var(--accent); border-radius:6px; font-size:13px; color:var(--muted)">
-                <strong>Note on Smart Contract Standards:</strong> The demo contracts currently deployed use custom,
-                simplified state variables for access control and balances. For mainnet production, these contracts are
-                being refactored to seamlessly inherit from <strong>OpenZeppelin's Ownable and ERC20</strong> components
-                for battle-tested, standardized security.
+                <strong>Note on Smart Contract Standards:</strong> The StarkAccess protocol is built for production readiness.
+                Contracts leverage <strong>OpenZeppelin's Ownable and ERC20</strong> components for battle-tested,
+                standardized security across all access control and token operations.
             </div>
         </div>
 

@@ -52,7 +52,7 @@ async function main() {
     const managerDeploy = await account.declareAndDeploy({
         contract: managerSierra,
         casm: managerCasm,
-        constructorCalldata: CallData.compile([verifierAddress]),
+        constructorCalldata: CallData.compile([verifierAddress, ACCOUNT_ADDRESS]),
     });
     const managerAddress = managerDeploy.deploy.contract_address;
     console.log(`✅ AccessManagerZK deployed at: ${managerAddress}`);
@@ -61,7 +61,8 @@ async function main() {
     const treasuryCasm = readJson('accessmanager_zk_contracts_ProtectedTreasury.compiled_contract_class.json');
 
     console.log('\n⏳ Deploying ProtectedTreasury...');
-    const initialBalance = 10000;
+    // initialBalance is already u256 in contracts, starknet.js handles numbers/bigints
+    const initialBalance = 10000n;
     const treasuryDeploy = await account.declareAndDeploy({
         contract: treasurySierra,
         casm: treasuryCasm,
@@ -92,7 +93,8 @@ async function main() {
 
     const balanceBefore = await treasuryContract.get_balance();
     console.log(`\n💸 Withdraw 500 tokens...`);
-    console.log(`💰 Treasury Balance Before: ${balanceBefore}`);
+    // get_balance returns u256, which starknet.js returns as BigInt
+    console.log(`💰 Treasury Balance Before: ${balanceBefore.toString()}`);
 
     try {
         const withdrawTx = await treasuryContract.withdraw(500n, PROOF_FELTS, publicInputs);
@@ -101,7 +103,7 @@ async function main() {
         console.log('✅ Withdrawal Successful!');
 
         const balanceAfter = await treasuryContract.get_balance();
-        console.log(`💰 Treasury Balance After: ${balanceAfter}`);
+        console.log(`💰 Treasury Balance After: ${balanceAfter.toString()}`);
 
         // ─── Part 4: Replay Attack Test ─────────────────────────────────────────
         console.log('\n🔁 Replay Attack Simulation: re-submitting same nullifier...');

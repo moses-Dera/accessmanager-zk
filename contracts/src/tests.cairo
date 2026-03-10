@@ -14,16 +14,17 @@ fn deploy_mock_verifier() -> ContractAddress {
     contract_address
 }
 
-fn setup() -> (ContractAddress, AccessManagerZK::ContractState) {
+fn setup() -> (ContractAddress, ContractAddress, AccessManagerZK::ContractState) {
+    let owner: ContractAddress = 0xABCD.try_into().unwrap();
     let verifier = deploy_mock_verifier();
     let mut state = AccessManagerZK::contract_state_for_testing();
-    AccessManagerZK::constructor(ref state, verifier);
-    (verifier, state)
+    AccessManagerZK::constructor(ref state, verifier, owner);
+    (verifier, owner, state)
 }
 
 #[test]
 fn test_set_role_root() {
-    let (_verifier, mut state) = setup();
+    let (_verifier, _owner, mut state) = setup();
     let caller: ContractAddress = 0x1234.try_into().unwrap();
     snforge_std::start_cheat_caller_address_global(caller);
 
@@ -38,14 +39,14 @@ fn test_set_role_root() {
 
 #[test]
 fn test_constructor() {
-    let (verifier, state) = setup();
+    let (verifier, _owner, state) = setup();
     let stored_addr = AccessManagerZK::AccessManagerZKImpl::get_verifier_address(@state);
     assert(stored_addr == verifier, 'Verifier not set correctly');
 }
 
 #[test]
 fn test_consume_valid_proof() {
-    let (_, mut state) = setup();
+    let (_, _, mut state) = setup();
 
     let caller: ContractAddress = 0x1234.try_into().unwrap();
     snforge_std::start_cheat_caller_address_global(caller);
@@ -73,7 +74,7 @@ fn test_consume_valid_proof() {
 #[test]
 #[should_panic(expected: ('Action hash mismatch',))]
 fn test_consume_invalid_action() {
-    let (_, mut state) = setup();
+    let (_, _, mut state) = setup();
 
     let caller: ContractAddress = 0x1234.try_into().unwrap();
     snforge_std::start_cheat_caller_address_global(caller);
@@ -96,7 +97,7 @@ fn test_consume_invalid_action() {
 #[test]
 #[should_panic(expected: ('Invalid root for role',))]
 fn test_consume_invalid_root() {
-    let (_, mut state) = setup();
+    let (_, _, mut state) = setup();
 
     let caller: ContractAddress = 0x1234.try_into().unwrap();
     snforge_std::start_cheat_caller_address_global(caller);
@@ -118,7 +119,7 @@ fn test_consume_invalid_root() {
 #[test]
 #[should_panic(expected: ('Nullifier already used',))]
 fn test_consume_replay() {
-    let (_, mut state) = setup();
+    let (_, _, mut state) = setup();
 
     let caller: ContractAddress = 0x1234.try_into().unwrap();
     snforge_std::start_cheat_caller_address_global(caller);
