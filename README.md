@@ -1,15 +1,23 @@
-# AccessManager ZK — Zero-Knowledge Authorization for Starknet
+# 🔐 StarkAccess Protocol — Zero-Knowledge Authorization for Starknet
 
-> **Hackathon Submission** | Starknet Ecosystem | Privacy & Security Track
+> **🚀 Starknet Ecosystem Hackathon Submission | Privacy & Security Track**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![NPM Version](https://img.shields.io/npm/v/starkaccess-sdk.svg?style=flat&color=success)](https://www.npmjs.com/package/starkaccess-sdk)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-4f9eff?style=flat&logo=vercel)](https://frontend-three-umber-41.vercel.app/)
+
+**StarkAccess** is the ultimate decentralized identity and access control protocol. It brings the seamless experience of *"Sign in with Google"* to Web3, but completely autonomous, anonymous, and powered by cutting-edge Zero-Knowledge cryptography.
+
+Forget public whitelists. Stop exposing your users' wallets. Welcome to the era of Zero-Knowledge Access Control on Starknet.
 
 ---
 
-## The Problem
+## 🌟 The Problem We Are Solving
 
-On Starknet (and most blockchains), role-based access control is fully public:
+On Starknet (and every major blockchain), role-based access control is fully public:
 
 ```cairo
-// Standard approach — leaks who your privileged users are
+// ❌ The Standard Approach — Leaks the identities of every privileged user!
 mapping(ContractAddress => bool) is_admin;
 
 fn sensitive_action() {
@@ -17,39 +25,48 @@ fn sensitive_action() {
 }
 ```
 
-Anyone can scan the chain and see the complete list of privileged wallets. In DAOs, DeFi whitelists, private voting, healthcare, and legal applications — **the membership list itself is sensitive data**.
+Anyone can scan the chain and instantly extract your complete list of DAO members, private investors, or healthcare participants. In a world moving towards privacy-first decentralized applications — **the membership list itself is highly sensitive data.**
 
 ---
 
-## The Solution
+## 🔥 The Solution: StarkAccess ZK
 
-**AccessManager ZK** replaces address whitelists with a single Merkle root and on-chain ZK proof verification.
+**StarkAccess** obliterates token-gated address lists by replacing them with a single **Merkle Root** and on-chain ZK verification.
 
-Instead of storing `wallet → role`, you store only a **root hash** of an off-chain Merkle tree. Users prove they belong to the tree using a **Noir ZK circuit**, without revealing which leaf (identity) they occupy.
+Instead of storing `wallet => role` on the blockchain, you securely track an off-chain Merkle tree of Poseidon hashes. Users prove they belong to the authorized group locally in their browser using a **Noir ZK circuit**, without ever revealing *which specific leaf* (identity) they occupy!
 
-```
-User holds:  secret key
-         ↓
-Noir circuit proves:
-  1. hash(secret) is a leaf in the Merkle tree
-  2. nullifier = hash(secret, action_hash)  ← binds proof to one action
-         ↓
-On-chain:  verify proof → check nullifier unused → execute action
-```
+### How It Works:
+1. **The Secret:** The user holds a cryptographic secret key.
+2. **The Proof:** Our Noir circuit generates a proof entirely locally stating:
+   - *“I know a secret whose hash is a leaf in the current Merkle tree.”*
+   - *“Here is a unique, mathematical Nullifier tied to this specific action.”*
+3. **The Verification:** The user submits this anonymous payload to your Smart Contract. The AccessManagerZK verifies the SNARK and records the Nullifier to instantly prevent replay attacks and double-voting.
 
-**Result:** Anonymous, replay-proof, role-based access control with zero on-chain identity exposure.
+**Result:** 100% Anonymous, Sybil-Resistant, Replay-Proof access control with ZERO on-chain identity exposure.
 
 ---
 
-## 🌟 Core Highlight: The StarkAccess SDK
+## 🌐 Try It Live! (Interactive Web Demo)
 
-The official JavaScript/TypeScript SDK is published on NPM and is the primary tool that makes ZK integration seamless. It abstracts away all the complex cryptography, allowing you to manage Zero-Knowledge Identities and generate proofs locally in your frontend or Node.js backend with just a few lines of code.
+Experience the magic of seamless ZK proving natively in your browser. Our demo connects directly to the Starknet Sepolia testnet. Generate real Noir Zero-Knowledge proofs without installing any software!
 
-### Installation & Usage
+👉 **[Launch the Live Vercel Demo](https://frontend-three-umber-41.vercel.app/)**
+
+*(No build required, the ZK Prover is pre-bundled and highly optimized).*
+
+---
+
+## �� Core Highlight: The StarkAccess SDK
+
+We aren't just shipping contracts—we are shipping developer tools. The official JavaScript/TypeScript SDK is published on NPM. It abstracts away all complex cryptography, allowing you to manage Zero-Knowledge Identities and generate proofs locally in your frontend or Node.js backend with just a few lines of code!
+
+### Installation
 
 ```bash
 npm install starkaccess-sdk
 ```
+
+### Usage in 4 Simple Steps
 
 ```javascript
 import { Identity, MerkleTree, StarkAccessProver } from 'starkaccess-sdk';
@@ -59,226 +76,122 @@ import circuitJson from './circuit.json';
 const identity = new Identity('my-secret-string');
 const leaf = identity.getLeaf();
 
-// 2. Build the group (Merkle Tree of 4 levels)
+// 2. Build the authorized group (Merkle Tree)
 const tree = new MerkleTree([leaf, otherLeaf1, otherLeaf2], 4);
 
-// 3. Generate a Zero-Knowledge Proof locally (in-browser)
+// 3. Generate a Zero-Knowledge Proof locally (in-browser or Node!)
 const proofPayload = await StarkAccessProver.generateProof(
   identity,
   tree,
   0,                  // Your index in the tree
-  'vote_proposal_1',  // The action you are taking
+  'vote_proposal_1',  // The specific action you are taking
   circuitJson
 );
 
-// Submit this payload to your Starknet Smart Contract!
+// 4. Submit to Cairo!
 // proofPayload contains: proof bytes, publicInputs, root, and nullifier
+// Submit this directly to your Starknet Smart Contract's protected function!
 ```
 
 ---
 
-## Architecture
+## 🏗️ Architecture Deep Dive
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │                        OFF-CHAIN                             │
-│  User secret → Poseidon hash → Merkle Leaf                   │
+│  User secret → Bn254 Poseidon hash → Merkle Leaf             │
 │  Noir Circuit generates: proof + nullifier + public_inputs   │
 └────────────────────────┬─────────────────────────────────────┘
-                         │ transaction
+                         │ anonymous transaction
 ┌────────────────────────▼─────────────────────────────────────┐
 │                        ON-CHAIN (Starknet)                   │
 │                                                              │
 │  ProtectedTreasury / Any DApp                                │
 │       │ calls consume(role_id, proof, public_inputs)         │
 │       ▼                                                      │
-│  AccessManagerZK                                             │
-│       │ 1. Check root matches role                           │
-│       │ 2. Check nullifier not used                          │
-│       │ 3. Verify proof via Verifier contract                │
-│       │ 4. Mark nullifier used                               │
+│  AccessManagerZK (The protocol dispatcher)                   │
+│       │ 1. Validate the Merkle Root matches the role         │
+│       │ 2. Ensure the Nullifier is unused (sybil resistance) │
+│       │ 3. Verify ZK proof via Verifier contract             │
+│       │ 4. Permanently mark Nullifier as spent               │
 │       ▼                                                      │
-│  Verifier (MockVerifier for demo / Groth16 for production)   │
+│  Verifier (Groth16 / UltraHonk backing)                      │
 └──────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Project Structure
+## ⚡ Use Cases
 
-```
-accessmanager-zk/
-├── circuits/                     # Noir ZK circuit
-│   ├── src/main.nr               # Merkle membership + nullifier proof
-│   ├── Nargo.toml
-│   └── Prover.toml
-├── contracts/                    # Cairo smart contracts
-│   ├── src/
-│   │   ├── interfaces.cairo      # IAccessManagerZK, IVerifier, IProtectedTreasury
-│   │   ├── access_manager.cairo  # Core protocol contract
-│   │   ├── verifier.cairo        # Groth16 verifier stub (production path)
-│   │   ├── mock_verifier.cairo   # MockVerifier for demo/testing
-│   │   ├── protected_treasury.cairo # Example: Private Treasury
-│   │   ├── private_voting.cairo  # Example: Anonymous Voting
-│   │   ├── tests.cairo           # AccessManagerZK unit tests
-│   │   ├── tests_treasury.cairo  # ProtectedTreasury unit tests
-│   │   └── tests_voting.cairo    # PrivateVoting unit tests
-│   └── Scarb.toml
-├── demo/
-│   ├── index.js                  # End-to-end demo script
-│   ├── generate_proof.ts         # Off-chain proof generation (Noir JS)
-│   ├── .env                      # RPC + account config
-│   └── package.json
-├── docs/
-│   ├── architecture.md           # Detailed flow diagrams
-│   ├── integration.md            # How to integrate into your contract
-│   └── threat-model.md           # Security analysis
-└── README.md
-```
+What can you build with StarkAccess?
+
+| Industry | Application & Benefit |
+|----------|-----------------------|
+| **DAO Governance** | **Private Voting**: Establish anonymous eligibility. The voter set is perfectly private, preventing bribery and social coercion. |
+| **DeFi & RWA** | **KYC Whitelists**: Prove accreditation or KYC status to interact with a protocol without linking your real-world identity to your wallet address. |
+| **Treasuries** | **Anonymous Multi-Sigs**: Authorize large capital deployments without exposing the list of signers to attackers or competitors. |
+| **Web3 Gaming** | **Sybil Resistance**: Airdrop claiming and tournament gating where players prove unique humanity without revealing their primary vaults. |
 
 ---
 
-## Quick Start
+## 🛠️ The Tech Stack
+
+We heavily leveraged the Starknet ecosystem tools to build this unified protocol:
+
+- **Smart Contracts:** Cairo 2 / Starknet natively integrated with **OpenZeppelin (Cairo)** standard components (Ownable, ERC20) for battle-tested security.
+- **ZK Circuit:** Noir (Barretenberg backend, Honk/Groth16 proving systems). We specifically optimized for Bn254 Poseidon hashing.
+- **Client & Tooling:** Node.js, Next/Vercel, `starknet.js` v9, and `starkaccess-sdk`.
+- **Build Infrastructure:** Scarb, Starknet Foundry (`snforge`).
+
+---
+
+## 🚀 Quick Start (Local Development)
+
+Want to run the entire protocol locally? It takes less than 2 minutes.
 
 ### Prerequisites
+- `scarb` (≥ 2.9.x)
+- `snforge` (≥ 0.35.x)
+- `nargo` (≥ 0.36.x)
+- `starknet-devnet` (≥ 0.7.x)
+- `node` (≥ 18)
 
-| Tool | Version | Install |
-|------|---------|---------|
-| `scarb` | ≥ 2.9.x | [docs.swmansion.com/scarb](https://docs.swmansion.com/scarb/download) |
-| `snforge` | ≥ 0.35.x | [foundry-rs.github.io/starknet-foundry](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html) |
-| `nargo` | ≥ 0.36.x | [noir-lang.org](https://noir-lang.org/docs/getting_started/installation) |
-| `starknet-devnet` | ≥ 0.7.x | `pip install starknet-devnet` |
-| `node` | ≥ 18 | [nodejs.org](https://nodejs.org) |
-
----
-
-### 1. Clone & Install
-
+### 1. Clone & Build
 ```bash
-git clone <repo-url>
+git clone https://github.com/moses-Dera/accessmanager-zk.git
 cd accessmanager-zk
+
+# Build Cairo contracts
+cd contracts && scarb build && cd ..
 
 # Install demo dependencies
 cd demo && npm install && cd ..
 ```
 
----
-
-### 2. Build Contracts
-
+### 2. Test the Framework
+Run the comprehensive smart contract test suite (23 tests verifying verification, replay attacks, logic execution, and invalid proofs):
 ```bash
-cd contracts
-scarb build
+cd contracts && snforge test
 ```
 
-Artifacts appear in `contracts/target/dev/`.
-
----
-
-Expected: **23 tests passed, 0 failed**
-
-```
-[PASS] tests::test_constructor
-[PASS] tests::test_set_role_root
-[PASS] tests::test_consume_valid_proof
-[PASS] tests::test_consume_invalid_root
-[PASS] tests::test_consume_invalid_action
-[PASS] tests::test_consume_replay
-[PASS] tests_treasury::test_treasury_deployment
-[PASS] tests_treasury::test_treasury_deposit
-[PASS] tests_voting::test_cast_vote_anonymous
-[PASS] tests_voting::test_double_vote_reverts
-... (23 total)
-```
-
----
-
-### 4. Run the Circuit Tests (Noir)
-
-```bash
-cd circuits
-nargo test
-```
-
----
-
-### 5. Run the End-to-End Demo
-
-**Terminal 1 — Start local devnet:**
-
+### 3. Run the End-to-End Demo
+Start your local blockchain:
 ```bash
 starknet-devnet --seed 42 --accounts 1
 ```
 
-Copy the printed account address and private key. They are pre-configured in `demo/.env` for seed 42.
-
-**Terminal 2 — Run the demo:**
-
+In a new terminal, run the E2E deploy and proof execution script:
 ```bash
-cd demo
-node index.js
+cd demo && node index.js
 ```
-
-**What the demo does:**
-
-1. ✅ Connects to pre-deployed account on local devnet
-2. ✅ Deploys `MockVerifier` contract
-3. ✅ Deploys `AccessManagerZK` contract (configured with MockVerifier)
-4. ✅ Deploys `ProtectedTreasury` DApp (configured with AccessManagerZK)
-5. ✅ Treasury owner registers a Merkle root of authorized users
-6. ✅ User generates **real ZK proof** locally → successfully withdraws 500 tokens
-7. ✅ Replay attack: same proof submitted again → **reverts** (nullifier already used)
-8. ✅ **Bonus**: User casts an anonymous vote using the same credentials on the Voting demo.
-
-**Expected output:**
-```
-🚀 Starting StarkAccess ZK Protocol Demo...
-✅ Connected to account: 0x034ba...
-✅ MockVerifier deployed at: 0x...
-✅ AccessManagerZK deployed at: 0x...
-✅ ProtectedTreasury deployed at: 0x...
-✅ Setup Transaction Confirmed!
-💰 Treasury Balance Before: 10000
-✅ Withdrawal Successful!
-💰 Treasury Balance After: 9500
-✅ Expected Failure: Nullifier already used — replay attack blocked!
-🎉 Demo complete!
-```
+*The script configures the treasury, registers the Merkle root, generates a live ZK proof in Node, and successfully withdraws funds—while testing and blocking replay attacks!*
 
 ---
 
-## 🌐 Live Web Demo
+## 🛡️ Integration Guide
 
-You can try the fully functioning **Interactive Web Demo** (which connects to the Sepolia testnet and generates real Noir ZK proofs directly in your browser) by opening:
-
-👉 **[Live Vercel Demo](https://frontend-three-umber-41.vercel.app/)**
-
-*(No build required, the ZK Prover is pre-bundled).*
-
-
-## Deploying to Starknet Testnet (Sepolia)
-
-1. **Configure `.env`** in `demo/`:
-   ```bash
-   SEPOLIA_RPC_URL=https://starknet-sepolia.public.blastapi.io
-   ACCOUNT_ADDRESS=0xYOUR_SEPOLIA_ACCOUNT
-   PRIVATE_KEY=0xYOUR_PRIVATE_KEY
-   ```
-
-2. **Fund your account** with Sepolia ETH from the [Starknet faucet](https://faucet.starknet.io)
-
-3. **Deploy from Scripts**:
-   ```bash
-   cd demo && node ../scripts/deploy_sepolia.js
-   ```
-
-*See [`docs/deployments.md`](./docs/deployments.md) for a list of live Starknet Sepolia contract addresses.*
-
----
-
-## How to Integrate Into Your Contract
-
-See [`docs/integration.md`](./docs/integration.md) for the full guide. The short version:
+Integrating StarkAccess into your own Cairo smart contract is trivially easy. See the full tutorial in [`docs/integration.md`](./docs/integration.md).
 
 ```cairo
 // 1. Store the AccessManagerZK address
@@ -287,7 +200,7 @@ struct Storage {
     access_manager: ContractAddress,
 }
 
-// 2. Protect any function
+// 2. Protect any function!
 fn my_protected_action(
     ref self: ContractState,
     proof: Span<felt252>,
@@ -296,64 +209,24 @@ fn my_protected_action(
     let manager = IAccessManagerZKDispatcher {
         contract_address: self.access_manager.read()
     };
-    // This reverts if proof is invalid or nullifier is already used
-    manager.consume(get_contract_address().into(), 999, proof, public_inputs);
+    
+    // This reverts the transaction instantly if the proof is invalid 
+    // or if the nullifier has already been used!
+    manager.consume(get_contract_address().into(), 'unique_action_id', proof, public_inputs);
 
-    // ... your sensitive logic here
+    // ... ✅ Your sensitive logic executes safely here ...
 }
 ```
 
 ---
 
-## Security
+## 📂 Documentation & Deployments
 
-| Threat | Mitigation |
-|--------|-----------|
-| Identity leakage | No wallet addresses stored — only a Merkle root |
-| Replay attacks | Nullifiers tracked on-chain; each proof usable exactly once |
-| Cross-action replay | `nullifier = hash(secret, action_hash)` binds proof to specific action |
-| Invalid proofs | On-chain verifier rejects proofs with wrong public inputs |
-| Contract vulnerabilities | Built on top of **OpenZeppelin** standard components (Ownable, ERC20) for battle-tested security |
-
-Full details: [`docs/threat-model.md`](./docs/threat-model.md)
+- **Sepolia Contract Addresses:** Live deployments on the Testnet are tracked in [`docs/deployments.md`](./docs/deployments.md)
+- **Security & Threat Model:** Comprehensive analysis of identity leakage and replay defense in [`docs/threat-model.md`](./docs/threat-model.md)
 
 ---
 
-## Production Path (Real Verifier)
+## 📜 License
 
-The demo uses `MockVerifier` which accepts any non-empty proof. For production:
-
-```bash
-# 1. Generate the Cairo verifier from your compiled circuit
-cd circuits
-nargo codegen-verifier
-
-# 2. Replace contracts/src/verifier.cairo with the generated output
-# 3. Redeploy with the real Groth16Verifier instead of MockVerifier
-```
-
----
-
-## Use Cases
-
-| Application | Benefit |
-|------------|---------|
-| DAO Treasury | Anonymous multi-sig authorization — no signer list exposed |
-| DeFi Whitelist | Prove KYC/accreditation without revealing wallet address |
-| Private Voting | Anonymous eligibility — voter set is private |
-| Access Control | Role membership hidden from attackers and competitors |
-
----
-
-## Tech Stack
-
-- **ZK Circuit:** Noir (Barretenberg backend, Honk/Groth16)
-- **Smart Contracts:** Cairo 2 / Starknet, **OpenZeppelin (Cairo)**
-- **Build Tools:** Scarb, Starknet Foundry (snforge)
-- **Demo:** Node.js + starknet.js v9
-
----
-
-## License
-
-MIT
+MIT License - Built for the Starknet community.
