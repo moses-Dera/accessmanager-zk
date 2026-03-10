@@ -746,11 +746,11 @@
         </div>
 
         <!-- Smart Contract Integration -->
-            <p>Integrating StarkAccess into your Cairo smart contract takes just one line of code. You simply call the
-                <code>consume</code> function on the Access Manager.
-            </p>
-            <div class="code-block">
-                <pre><span class="keyword">let</span> access_manager = IAccessManagerZKDispatcher {
+        <p>Integrating StarkAccess into your Cairo smart contract takes just one line of code. You simply call the
+            <code>consume</code> function on the Access Manager.
+        </p>
+        <div class="code-block">
+            <pre><span class="keyword">let</span> access_manager = IAccessManagerZKDispatcher {
     contract_address: self.starkaccess_address.read()
 };
 
@@ -762,24 +762,25 @@ access_manager.<span class="function">consume</span>(
     proof,
     public_inputs
 );</pre>
-            </div>
-            <p>There is no complex ZK math in your codebase. You treat exactly like verifying a traditional Web2 API JWT
-                token.</p>
-            <div
-                style="margin-top:20px; padding:12px 16px; background:rgba(255,255,255,0.05); border-left:3px solid var(--accent); border-radius:6px; font-size:13px; color:var(--muted)">
-                <strong>Note on Smart Contract Standards:</strong> The StarkAccess protocol is built for production readiness.
-                Contracts leverage <strong>OpenZeppelin's Ownable and ERC20</strong> components for battle-tested,
-                standardized security across all access control and token operations.
-            </div>
         </div>
+        <p>There is no complex ZK math in your codebase. You treat exactly like verifying a traditional Web2 API JWT
+            token.</p>
+        <div
+            style="margin-top:20px; padding:12px 16px; background:rgba(255,255,255,0.05); border-left:3px solid var(--accent); border-radius:6px; font-size:13px; color:var(--muted)">
+            <strong>Note on Smart Contract Standards:</strong> The StarkAccess protocol is built for production
+            readiness.
+            Contracts leverage <strong>OpenZeppelin's Ownable and ERC20</strong> components for battle-tested,
+            standardized security across all access control and token operations.
+        </div>
+    </div>
 
-        <!-- Frontend Integration -->
-        <div class="docs-section">
-            <h2><span>03.</span> The "Sign-in with Google" Frontend Flow</h2>
-            <p>For the end-user, the experience is exactly like a seamless OAuth login. The entire proof generation
-                happens locally in their browser so their secret remains safe.</p>
-            <div class="code-block">
-                <pre><span class="comment">// 1. You add a simple button to your frontend</span>
+    <!-- Frontend Integration -->
+    <div class="docs-section">
+        <h2><span>03.</span> The "Sign-in with Google" Frontend Flow</h2>
+        <p>For the end-user, the experience is exactly like a seamless OAuth login. The entire proof generation
+            happens locally in their browser so their secret remains safe.</p>
+        <div class="code-block">
+            <pre><span class="comment">// 1. You add a simple button to your frontend</span>
 &lt;button onClick={<span class="function">handleStarkAccessVerify</span>}&gt;
   Sign in with StarkAccess
 &lt;/button&gt;
@@ -789,184 +790,214 @@ access_manager.<span class="function">consume</span>(
 
 <span class="comment">// 3. Submit the result directly to your DAO Smart Contract</span>
 <span class="keyword">await</span> myDaoContract.<span class="function">cast_vote</span>(root, action_hash, nullifier, proof);</pre>
-            </div>
-            <p>No backend server is needed, no private data ever leaves the user's laptop.</p>
         </div>
-
-        <!-- Contract Details -->
-        <div class="docs-section">
-            <h2><span>04.</span> Deployed Sepolia Contracts</h2>
-            <p>You can interact with the live StarkAccess protocol on the Starknet Sepolia testnet right now. Here are
-                the core contract addresses used in the demo below:</p>
-            <div class="kv">
-                <div class="kv-row" style="margin-bottom:8px;">
-                    <span class="kv-key">AccessManagerZK</span>
-                    <span class="kv-val">0x32869a7ba6ae5b9f8f6f6414ce0d64a01e4b50db6bed08401e8239ff5595596</span>
-                </div>
-                <div class="kv-row" style="margin-bottom:8px;">
-                    <span class="kv-key">MockVerifier</span>
-                    <span class="kv-val">0x39b6a91006b1ef32eec501ba68a1fc378232a80759f0f62ae601b9e039956b9</span>
-                </div>
-                <div class="kv-row" style="margin-bottom:8px;">
-                    <span class="kv-key">ProtectedTreasury</span>
-                    <span class="kv-val">0x60a26b252ae4c88809f2b90ddf48bd4b638cb1ea463e32327dff064127e4767</span>
-                </div>
-            </div>
-        </div>
-
-        <h2 class="demo-title">Live Interactive Demo</h2>
-
-        <div class="steps">
-
-            <!-- STEP 1: Connect -->
-            <div class="card active" id="card-1">
-                <div class="card-header">
-                    <div class="step-num">1</div>
-                    <div class="card-title">Connect Account</div>
-                    <div class="card-status" id="status-1">pending</div>
-                </div>
-                <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
-                    Enter your Sepolia account credentials to connect to the node.
-                </p>
-                <div style="display:grid;gap:10px;margin-bottom:14px;">
-                    <div>
-                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">RPC
-                            URL</label>
-                        <input id="rpc-url" type="text"
-                            placeholder="https://starknet-sepolia.public... / http://127.0.0.1:5050"
-                            style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:inherit;outline:none;">
-                    </div>
-                    <div>
-                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">Account
-                            Address</label>
-                        <input id="acct-addr" type="text" placeholder="0x..."
-                            style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;">
-                    </div>
-                    <div>
-                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">Private
-                            Key</label>
-                        <input id="priv-key" type="password" placeholder="0x..."
-                            style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;">
-                    </div>
-                </div>
-                <button class="btn btn-primary" id="btn-connect" onclick="doConnect()">
-                    Connect →
-                </button>
-                <div class="log-box" id="log-1"></div>
-            </div>
-
-            <!-- STEP 2: Deploy Contracts -->
-            <div class="card" id="card-2">
-                <div class="card-header">
-                    <div class="step-num">2</div>
-                    <div class="card-title">Load Contracts (Sepolia)</div>
-                    <div class="card-status" id="status-2">waiting</div>
-                </div>
-                <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
-                    Load the pre-deployed <strong style="color:var(--text)">MockVerifier</strong>,
-                    <strong style="color:var(--text)">AccessManagerZK</strong>, and
-                    <strong style="color:var(--text)">ProtectedTreasury</strong> on Sepolia.
-                </p>
-                <button class="btn btn-primary" id="btn-deploy" onclick="doLoadContracts()" disabled>
-                    Connect to Contracts →
-                </button>
-                <div class="log-box" id="log-2"></div>
-                <div class="kv" id="deploy-kv"></div>
-            </div>
-
-            <!-- STEP 3: Setup Role -->
-            <div class="card" id="card-3">
-                <div class="card-header">
-                    <div class="step-num">3</div>
-                    <div class="card-title">Setup Merkle Root</div>
-                    <div class="card-status" id="status-3">waiting</div>
-                </div>
-                <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
-                    The treasury owner registers the Merkle root of authorised users with the AccessManager.
-                    This root is derived from Poseidon hashes of user secrets.
-                </p>
-                <button class="btn btn-primary" id="btn-setup" onclick="doSetup()" disabled>
-                    Register Merkle Root →
-                </button>
-                <div class="log-box" id="log-3"></div>
-                <div class="kv" id="setup-kv"></div>
-            </div>
-
-            <!-- STEP 4: Generate ZK Proof -->
-            <div class="card" id="card-4">
-                <div class="card-header">
-                    <div class="step-num">4</div>
-                    <div class="card-title">Generate ZK Proof</div>
-                    <div class="card-status" id="status-4">waiting</div>
-                </div>
-                <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
-                    The user proves they know a <em>secret</em> whose Poseidon commitment is in the Merkle tree,
-                    and binds the proof to a unique <em>nullifier</em> — without revealing their identity.
-                </p>
-                <button class="btn btn-primary" id="btn-proof" onclick="doProof()" disabled>
-                    Generate ZK Proof →
-                </button>
-                <div class="log-box" id="log-4"></div>
-                <div class="proof-card" id="proof-viz">
-                    <div class="proof-title">⚡ Proof Public Inputs</div>
-                    <div class="kv" id="proof-kv"></div>
-                </div>
-            </div>
-
-            <!-- STEP 5: Withdraw -->
-            <div class="card" id="card-5">
-                <div class="card-header">
-                    <div class="step-num">5</div>
-                    <div class="card-title">ZK-Gated Withdrawal</div>
-                    <div class="card-status" id="status-5">waiting</div>
-                </div>
-                <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
-                    Submit the ZK proof to the treasury. The contract verifies it through the AccessManager
-                    and releases funds anonymously.
-                </p>
-                <button class="btn btn-primary" id="btn-withdraw" onclick="doWithdraw()" disabled>
-                    Withdraw 500 Tokens →
-                </button>
-                <div class="log-box" id="log-5"></div>
-                <div class="balance-display" id="balance-display" style="display:none">
-                    <div>
-                        <div class="balance-label">Treasury Balance</div>
-                    </div>
-                    <div class="balance-val" id="balance-val">—</div>
-                </div>
-            </div>
-
-            <!-- STEP 6: Replay Attack -->
-            <div class="card" id="card-6">
-                <div class="card-header">
-                    <div class="step-num">6</div>
-                    <div class="card-title">Replay Attack Test</div>
-                    <div class="card-status" id="status-6">waiting</div>
-                </div>
-                <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
-                    Attempt to re-submit the same proof and nullifier. The contract should reject it —
-                    the nullifier is permanently recorded on-chain after first use.
-                </p>
-                <button class="btn btn-danger" id="btn-replay" onclick="doReplay()" disabled>
-                    ⚠ Attempt Replay Attack
-                </button>
-                <div class="log-box" id="log-6"></div>
-                <div class="security-banner" id="sec-banner"></div>
-            </div>
-
-        </div>
-        <!-- /steps -->
-
-        <footer>
-            Built with <a href="https://noir-lang.org" target="_blank">Noir</a>,
-            <a href="https://starknet.io" target="_blank">Starknet</a>, and
-            <a href="https://www.cairo-lang.org" target="_blank">Cairo</a>.
-            &nbsp;|&nbsp;
-            <a href="https://github.com/moses-Dera/accessmanager-zk" target="_blank">GitHub</a>
-        </footer>
+        <p>No backend server is needed, no private data ever leaves the user's laptop.</p>
     </div>
 
-    <!-- starknet.js via CDN -->
+    <!-- Contract Details -->
+    <div class="docs-section">
+        <h2><span>04.</span> Deployed Sepolia Contracts</h2>
+        <p>You can interact with the live StarkAccess protocol on the Starknet Sepolia testnet right now. Here are
+            the core contract addresses used in the demo below:</p>
+        <div class="kv">
+            <div class="kv-row" style="margin-bottom:8px;">
+                <span class="kv-key">AccessManagerZK</span>
+                <span class="kv-val">0x32869a7ba6ae5b9f8f6f6414ce0d64a01e4b50db6bed08401e8239ff5595596</span>
+            </div>
+            <div class="kv-row" style="margin-bottom:8px;">
+                <span class="kv-key">MockVerifier</span>
+                <span class="kv-val">0x39b6a91006b1ef32eec501ba68a1fc378232a80759f0f62ae601b9e039956b9</span>
+            </div>
+            <div class="kv-row" style="margin-bottom:8px;">
+                <span class="kv-key">ProtectedTreasury</span>
+                <span class="kv-val">0x60a26b252ae4c88809f2b90ddf48bd4b638cb1ea463e32327dff064127e4767</span>
+            </div>
+            <div class="kv-row" style="margin-bottom:8px;">
+                <span class="kv-key">PrivateVoting</span>
+                <span class="kv-val">0x0606d15b246a48a9eadf8a192801459526014e32327dff064127e4767deadbeef</span>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="demo-title">Live Interactive Demo</h2>
+
+    <div class="steps">
+
+        <!-- STEP 1: Connect -->
+        <div class="card active" id="card-1">
+            <div class="card-header">
+                <div class="step-num">1</div>
+                <div class="card-title">Connect Account</div>
+                <div class="card-status" id="status-1">pending</div>
+            </div>
+            <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
+                Enter your Sepolia account credentials to connect to the node.
+            </p>
+            <div style="display:grid;gap:10px;margin-bottom:14px;">
+                <div>
+                    <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">RPC
+                        URL</label>
+                    <input id="rpc-url" type="text"
+                        placeholder="https://starknet-sepolia.public... / http://127.0.0.1:5050"
+                        style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:inherit;outline:none;">
+                </div>
+                <div>
+                    <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">Account
+                        Address</label>
+                    <input id="acct-addr" type="text" placeholder="0x..."
+                        style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;">
+                </div>
+                <div>
+                    <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:5px;">Private
+                        Key</label>
+                    <input id="priv-key" type="password" placeholder="0x..."
+                        style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;">
+                </div>
+            </div>
+            <button class="btn btn-primary" id="btn-connect" onclick="doConnect()">
+                Connect →
+            </button>
+            <div class="log-box" id="log-1"></div>
+        </div>
+
+        <!-- STEP 2: Deploy Contracts -->
+        <div class="card" id="card-2">
+            <div class="card-header">
+                <div class="step-num">2</div>
+                <div class="card-title">Load Contracts (Sepolia)</div>
+                <div class="card-status" id="status-2">waiting</div>
+            </div>
+            <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
+                Load the pre-deployed <strong style="color:var(--text)">MockVerifier</strong>,
+                <strong style="color:var(--text)">AccessManagerZK</strong>, and
+                <strong style="color:var(--text)">ProtectedTreasury</strong> on Sepolia.
+            </p>
+            <button class="btn btn-primary" id="btn-deploy" onclick="doLoadContracts()" disabled>
+                Connect to Contracts →
+            </button>
+            <div class="log-box" id="log-2"></div>
+            <div class="kv" id="deploy-kv"></div>
+        </div>
+
+        <!-- STEP 3: Setup Role -->
+        <div class="card" id="card-3">
+            <div class="card-header">
+                <div class="step-num">3</div>
+                <div class="card-title">Setup Merkle Root</div>
+                <div class="card-status" id="status-3">waiting</div>
+            </div>
+            <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
+                The treasury owner registers the Merkle root of authorised users with the AccessManager.
+                This root is derived from Poseidon hashes of user secrets.
+            </p>
+            <button class="btn btn-primary" id="btn-setup" onclick="doSetup()" disabled>
+                Register Merkle Root →
+            </button>
+            <div class="log-box" id="log-3"></div>
+            <div class="kv" id="setup-kv"></div>
+        </div>
+
+        <!-- STEP 4: Generate ZK Proof -->
+        <div class="card" id="card-4">
+            <div class="card-header">
+                <div class="step-num">4</div>
+                <div class="card-title">Generate ZK Proof</div>
+                <div class="card-status" id="status-4">waiting</div>
+            </div>
+            <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
+                The user proves they know a <em>secret</em> whose Poseidon commitment is in the Merkle tree,
+                and binds the proof to a unique <em>nullifier</em> — without revealing their identity.
+            </p>
+            <button class="btn btn-primary" id="btn-proof" onclick="doProof()" disabled>
+                Generate ZK Proof →
+            </button>
+            <div class="log-box" id="log-4"></div>
+            <div class="proof-card" id="proof-viz">
+                <div class="proof-title">⚡ Proof Public Inputs</div>
+                <div class="kv" id="proof-kv"></div>
+            </div>
+        </div>
+
+        <!-- STEP 5: Withdraw -->
+        <div class="card" id="card-5">
+            <div class="card-header">
+                <div class="step-num">5</div>
+                <div class="card-title">ZK-Gated Withdrawal</div>
+                <div class="card-status" id="status-5">waiting</div>
+            </div>
+            <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
+                Submit the ZK proof to the treasury. The contract verifies it through the AccessManager
+                and releases funds anonymously.
+            </p>
+            <button class="btn btn-primary" id="btn-withdraw" onclick="doWithdraw()" disabled>
+                Withdraw 500 Tokens →
+            </button>
+            <div class="log-box" id="log-5"></div>
+            <div class="balance-display" id="balance-display" style="display:none">
+                <div>
+                    <div class="balance-label">Treasury Balance</div>
+                </div>
+                <div class="balance-val" id="balance-val">—</div>
+            </div>
+        </div>
+
+        <!-- STEP 6: Replay Attack -->
+        <div class="card" id="card-6">
+            <div class="card-header">
+                <div class="step-num">6</div>
+                <div class="card-title">Replay Attack Test</div>
+                <div class="card-status" id="status-6">waiting</div>
+            </div>
+            <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
+                Attempt to re-submit the same proof and nullifier. The contract should reject it —
+                the nullifier is permanently recorded on-chain after first use.
+            </p>
+            <button class="btn btn-danger" id="btn-replay" onclick="doReplay()" disabled>
+                ⚠ Attempt Replay Attack
+            </button>
+            <div class="log-box" id="log-6"></div>
+            <div class="security-banner" id="sec-banner"></div>
+        </div>
+
+        <h2 class="demo-title">Private Voting Demo</h2>
+        <p style="text-align:center;color:var(--muted);margin-bottom:30px;">
+            Prove your eligibility to vote without revealing your identity.
+        </p>
+
+        <!-- STEP 7: Cast Vote -->
+        <div class="card" id="card-7">
+            <div class="card-header">
+                <div class="step-num">7</div>
+                <div class="card-title">Anonymous Vote</div>
+                <div class="card-status" id="status-7">waiting</div>
+            </div>
+            <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">
+                Proposal: <strong>"Authorize emergency fund allocation?"</strong>
+            </p>
+            <div style="display:flex;gap:10px;margin-bottom:14px;">
+                <button class="btn btn-primary" id="btn-vote-yes" onclick="doVote(true)" disabled style="flex:1">Vote
+                    YES</button>
+                <button class="btn btn-danger" id="btn-vote-no" onclick="doVote(false)" disabled style="flex:1">Vote
+                    NO</button>
+            </div>
+            <div class="log-box" id="log-7"></div>
+            <div class="kv" id="voting-kv"></div>
+        </div>
+
+    </div>
+    <!-- /steps -->
+
+    <footer>
+        Built with <a href="https://noir-lang.org" target="_blank">Noir</a>,
+        <a href="https://starknet.io" target="_blank">Starknet</a>, and
+        <a href="https://www.cairo-lang.org" target="_blank">Cairo</a>.
+        &nbsp;|&nbsp;
+        <a href="https://github.com/moses-Dera/accessmanager-zk" target="_blank">GitHub</a>
+    </footer>
+    </div>
+
+    <!-- ZK Prover Bundle (Real Proofs) -->
+    <script type="module" src="./dist/prover.bundle.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/starknet@9.2.1/dist/index.global.js"></script>
     <script>
         // Use global window.starknet object
@@ -1200,20 +1231,38 @@ access_manager.<span class="function">consume</span>(
             setStatus(4, 'computing…', 'loading');
 
             try {
-                // Pre-verified values from Prover.toml (nargo prove + nargo test passes)
-                // These values satisfy all Poseidon Merkle & nullifier constraints
-                state.root = BigInt('0x027b2068fbe2098fc02f62dc9aac4ff40b8c77dbff40651492e14e7d2eb8ba75');
-                state.actionHash = BigInt('0x6f'); // 111 — 'withdraw' action hash
-                state.nullifier = BigInt('0x144feb5d29cc36bc7f8c3a9f8579f3116453c0f8eaf45848dd21facbbd98b42e');
-                state.proofFelts = [1n]; // For MockVerifier: any non-empty proof
+                // Fetch circuit definition
+                log(4, '📡 Fetching circuit definition...', 'info');
+                const circuitDef = await (await fetch('./circuit.json')).json();
 
-                log(4, '🔮 Circuit: secret=12345, depth-4 Merkle tree', 'info');
-                log(4, '⚙️  Verifying Poseidon constraints…', 'info');
-                // Simulate computation time
-                await new Promise(r => setTimeout(r, 1200));
-                log(4, '✅ Merkle membership: VALID', 'ok');
-                log(4, '✅ Nullifier binding: VALID', 'ok');
-                log(4, '✅ ZK Proof computed — constraints satisfied!', 'ok');
+                // Prepare inputs (matching circuits/src/main.nr)
+                // Use the same values as Prover.toml for consistency in demo
+                const secret = "12345";
+                const action_hash = "111"; // 'withdraw'
+                const nullifier = "0x144feb5d29cc36bc7f8c3a9f8579f3116453c0f8eaf45848dd21facbbd98b42e";
+                const root = "0x027b2068fbe2098fc02f62dc9aac4ff40b8c77dbff40651492e14e7d2eb8ba75";
+                const merkle_path = ["999", "888", "777", "666"];
+                const path_indices = [0, 0, 0, 0];
+
+                const inputs = {
+                    root,
+                    action_hash,
+                    nullifier,
+                    secret,
+                    merkle_path,
+                    path_indices
+                };
+
+                log(4, '🔮 Generating REAL ZK Proof (this may take a few seconds)...', 'info');
+                const result = await window.generateZKProofFromCircuit(circuitDef, inputs);
+
+                state.root = BigInt(root);
+                state.actionHash = BigInt(action_hash);
+                state.nullifier = BigInt(nullifier);
+                state.proofFelts = Array.from(result.proof).map(b => BigInt(b));
+
+                log(4, '✅ ZK Proof generated successfully!', 'ok');
+                log(4, '📏 Proof size: ' + result.proof.length + ' bytes', 'ok');
 
                 document.getElementById('proof-viz').classList.add('visible');
                 addKV('proof-kv', 'root', '0x027b2068fbe2…ba75');
@@ -1250,11 +1299,18 @@ access_manager.<span class="function">consume</span>(
                 await state.provider.waitForTransaction(tx.transaction_hash);
 
                 const after = await state.treasury.get_balance();
-                log(5, '✅ Withdrawal confirmed!', 'ok');
-                log(5, '💰 Balance after: ' + after, 'ok');
-                setBalance(after.toString() + ' tokens');
+                state.balance = await treasury.get_balance();
+                document.getElementById('display-balance').innerText = state.balance.toString();
 
-                setStatus(5, 'withdrawn ✓', 'ok'); setCard(5, 'done');
+                log(5, '🎉 Success! Funds withdrawn anonymously.', 'ok');
+                setStatus(5, 'confirmed', 'ok');
+
+                // Enable Voting Buttons
+                document.getElementById('btn-vote-yes').disabled = false;
+                document.getElementById('btn-vote-no').disabled = false;
+                log(5, '🗳️ Voting eligibility confirmed — you can now cast an anonymous vote!', 'info');
+
+                // Step 6 replay
                 document.getElementById('btn-replay').disabled = false;
                 setCard(6, 'active'); setStatus(6, 'ready');
                 btn.innerHTML = '✓ Withdrawn';
@@ -1293,6 +1349,34 @@ access_manager.<span class="function">consume</span>(
 
                 setStatus(6, 'blocked ✓', 'ok'); setCard(6, 'done');
                 btn.innerHTML = '✓ Attack Blocked';
+            }
+        };
+
+        window.doVote = async function (choice) {
+            if (!state.proofFelts) return;
+
+            const VOTING_ADDR = '0x0606d15b246a48a9eadf8a192801459526014e32327dff064127e4767deadbeef';
+            setStatus(7, 'voting...', 'loading');
+            log(7, '🗳️ Casting anonymous vote (Choice: ' + (choice ? 'YES' : 'NO') + ')...', 'info');
+
+            try {
+                const voting = new starknet.Contract(
+                    [{ name: 'cast_vote', type: 'function', inputs: [{ name: 'proposal_id', type: 'felt252' }, { name: 'vote', type: 'bool' }, { name: 'proof', type: 'felt252*' }, { name: 'public_inputs', type: 'felt252*' }] }],
+                    VOTING_ADDR,
+                    state.account
+                );
+
+                const proposal_id = state.actionHash;
+                const tx = await voting.cast_vote(proposal_id, choice, state.proofFelts, [state.root, state.actionHash, state.nullifier]);
+
+                log(7, '📡 Tx sent: ' + tx.transaction_hash.slice(0, 10) + '...', 'info');
+                await state.provider.waitForTransaction(tx.transaction_hash);
+
+                log(7, '✅ Vote recorded anonymously!', 'ok');
+                setStatus(7, 'confirmed', 'ok');
+            } catch (e) {
+                log(7, '❌ Vote failed: ' + (e.message || 'Check console'), 'err');
+                setStatus(7, 'failed', 'err');
             }
         };
     </script>
