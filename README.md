@@ -211,21 +211,69 @@ node index.js
 
 ---
 
+## 🌐 Live Web Demo
+
+You can try the fully functioning **Interactive Web Demo** (which connects to the Sepolia testnet and generates real Noir ZK proofs directly in your browser) by opening:
+
+👉 **[frontend/index.html](./frontend/index.html)** in your browser.
+
+*(No build required, the ZK Prover is pre-bundled).*
+
+## 📦 StarkAccess SDK
+
+The official JavaScript/TypeScript SDK is published on NPM. It simplifies Zero-Knowledge Identity management and proof generation for your frontend or Node.js backend.
+
+### Installation
+
+```bash
+npm install starkaccess-sdk
+```
+
+### Usage
+
+```javascript
+import { Identity, MerkleTree, StarkAccessProver } from 'starkaccess-sdk';
+import circuitJson from './circuit.json';
+
+// 1. Create your digital identity (Keep this secret!)
+const identity = new Identity('my-secret-string');
+const leaf = identity.getLeaf();
+
+// 2. Build the group (Merkle Tree of 4 levels)
+const tree = new MerkleTree([leaf, otherLeaf1, otherLeaf2], 4);
+
+// 3. Generate a Zero-Knowledge Proof locally
+const proofPayload = await StarkAccessProver.generateProof(
+  identity,
+  tree,
+  0,                  // Your index in the tree
+  'vote_proposal_1',  // The action you are taking
+  circuitJson
+);
+
+// proofPayload contains: proof bytes, publicInputs, root, and nullifier
+// Submit this payload to your Starknet Smart Contract!
+```
+
+---
+
 ## Deploying to Starknet Testnet (Sepolia)
 
 1. **Configure `.env`** in `demo/`:
    ```bash
-   RPC_URL=https://starknet-sepolia.public.blastapi.io
+   SEPOLIA_RPC_URL=https://starknet-sepolia.public.blastapi.io
    ACCOUNT_ADDRESS=0xYOUR_SEPOLIA_ACCOUNT
    PRIVATE_KEY=0xYOUR_PRIVATE_KEY
    ```
 
 2. **Fund your account** with Sepolia ETH from the [Starknet faucet](https://faucet.starknet.io)
 
-3. **Run the demo** — same command, it will deploy to Sepolia:
+3. **Deploy from Scripts**:
    ```bash
-   cd demo && node index.js
+   cd demo && node ../scripts/deploy_sepolia.js
    ```
+
+*See [`docs/deployments.md`](./docs/deployments.md) for a list of live Starknet Sepolia contract addresses.*
 
 ---
 
