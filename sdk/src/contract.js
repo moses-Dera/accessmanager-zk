@@ -23,7 +23,7 @@ export class StarkAccessClient {
             contractAddress: this.contractAddress,
             entrypoint: 'setup_role_root',
             calldata: [root.toString()]
-        });
+        }, undefined, { version: 1, maxFee: 1e15 });
     }
 
     /**

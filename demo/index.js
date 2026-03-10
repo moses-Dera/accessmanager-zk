@@ -118,7 +118,7 @@ async function main() {
                 '1', '1',  // proof (Span: length 1, value 1)
                 '3', root.toString(), actionHashBigInt.toString(), proofPayload.nullifier.toString()
             ]
-        });
+        }, undefined, { version: 1, maxFee: 1e15 });
         await provider.waitForTransaction(withdrawTx.transaction_hash);
         console.log('✅ Withdrawal Successful!');
 

@@ -1,9 +1,28 @@
 {
     "name": "starkaccess-sdk",
     "version": "1.0.0",
-    "description": "Unified SDK for StarkAccess ZK Protocol",
+    "description": "Unified SDK for StarkAccess ZK Protocol - Privacy-preserving identity management on Starknet",
     "main": "src/index.js",
     "type": "module",
+    "files": [
+        "src",
+        "README.md",
+        "LICENSE"
+    ],
+    "keywords": [
+        "starknet",
+        "zero-knowledge",
+        "noir",
+        "identity",
+        "privacy",
+        "sdk"
+    ],
+    "author": "StarkAccess Team",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/moses-Dera/accessmanager-zk.git"
+    },
     "scripts": {
         "test": "node --test tests/*.test.js"
     },
