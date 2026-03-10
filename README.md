@@ -41,6 +41,42 @@ On-chain:  verify proof → check nullifier unused → execute action
 
 ---
 
+## 🌟 Core Highlight: The StarkAccess SDK
+
+The official JavaScript/TypeScript SDK is published on NPM and is the primary tool that makes ZK integration seamless. It abstracts away all the complex cryptography, allowing you to manage Zero-Knowledge Identities and generate proofs locally in your frontend or Node.js backend with just a few lines of code.
+
+### Installation & Usage
+
+```bash
+npm install starkaccess-sdk
+```
+
+```javascript
+import { Identity, MerkleTree, StarkAccessProver } from 'starkaccess-sdk';
+import circuitJson from './circuit.json';
+
+// 1. Create your digital identity (Keep this secret!)
+const identity = new Identity('my-secret-string');
+const leaf = identity.getLeaf();
+
+// 2. Build the group (Merkle Tree of 4 levels)
+const tree = new MerkleTree([leaf, otherLeaf1, otherLeaf2], 4);
+
+// 3. Generate a Zero-Knowledge Proof locally (in-browser)
+const proofPayload = await StarkAccessProver.generateProof(
+  identity,
+  tree,
+  0,                  // Your index in the tree
+  'vote_proposal_1',  // The action you are taking
+  circuitJson
+);
+
+// Submit this payload to your Starknet Smart Contract!
+// proofPayload contains: proof bytes, publicInputs, root, and nullifier
+```
+
+---
+
 ## Architecture
 
 ```
@@ -219,43 +255,6 @@ You can try the fully functioning **Interactive Web Demo** (which connects to th
 
 *(No build required, the ZK Prover is pre-bundled).*
 
-## 📦 StarkAccess SDK
-
-The official JavaScript/TypeScript SDK is published on NPM. It simplifies Zero-Knowledge Identity management and proof generation for your frontend or Node.js backend.
-
-### Installation
-
-```bash
-npm install starkaccess-sdk
-```
-
-### Usage
-
-```javascript
-import { Identity, MerkleTree, StarkAccessProver } from 'starkaccess-sdk';
-import circuitJson from './circuit.json';
-
-// 1. Create your digital identity (Keep this secret!)
-const identity = new Identity('my-secret-string');
-const leaf = identity.getLeaf();
-
-// 2. Build the group (Merkle Tree of 4 levels)
-const tree = new MerkleTree([leaf, otherLeaf1, otherLeaf2], 4);
-
-// 3. Generate a Zero-Knowledge Proof locally
-const proofPayload = await StarkAccessProver.generateProof(
-  identity,
-  tree,
-  0,                  // Your index in the tree
-  'vote_proposal_1',  // The action you are taking
-  circuitJson
-);
-
-// proofPayload contains: proof bytes, publicInputs, root, and nullifier
-// Submit this payload to your Starknet Smart Contract!
-```
-
----
 
 ## Deploying to Starknet Testnet (Sepolia)
 
